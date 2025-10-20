@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Digital Product Empire</title>
+    <style>
+/* CSS Reset Sederhana */
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Georgia', 'Times New Roman', serif;
+        }
+
+    * {
+      -webkit-tap-highlight-color: transparent;
+    }
+
+        /* Latar belakang di luar buku */
+        body {
+            background-color: #333;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden; /* Mencegah scroll di body utama */
+        }
+
+        /* Kontainer untuk tata letak buku */
+        .book-spread {
+            display: flex;
+            width: 90vw;
+            max-width: 1400px;
+            height: 90vh;
+            max-height: 900px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            position: relative;
+        }
+
+        /* Tampilan halaman (kiri dan kanan) */
+        .page {
+            width: 50%;
+            height: 100%;
+            background: #fdfaf4; /* Warna kertas krem */
+            padding: 3rem;
+            box-sizing: border-box;
+            overflow-y: auto; /* Scroll di dalam halaman jika konten penuh */
+            color: #222;
+            line-height: 1.7;
+            position: relative;
+        }
+
+        /* Simulasi 'tulang' buku */
+        .page.left {
+            border-right: 1px solid #ddd;
+            box-shadow: inset -5px 0 15px -10px rgba(0,0,0,0.3);
+        }
+
+        .page.right {
+            border-left: 1px solid #ddd;
+            box-shadow: inset 5px 0 15px -10px rgba(0,0,0,0.3);
+        }
+
+        /* Area konten di dalam halaman */
+        .content-area {
+            text-align: justify; /* Tampilan rata kiri-kanan seperti novel */
+        }
+
+        /* Penomoran halaman */
+        .page-number {
+            position: absolute;
+            bottom: 1.5rem;
+            left: 0;
+            right: 0;
+            text-align: center;
+            font-size: 0.9em;
+            color: #888;
+            font-style: italic;
+        }
+
+        /* --- STYLING KONTEN --- */
+        
+        /* Halaman sampul */
+        .cover-page .content-area {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            text-align: center;
+        }
+        .cover-page h1 {
+            font-size: 3.5em;
+            color: #111;
+            margin: 0;
+        }
+        .cover-page .author {
+            font-size: 1.5em;
+            color: #555;
+            margin-top: 1rem;
+            font-style: italic;
+        }
+
+        /* Halaman kosong (untuk padding) */
+        .blank-page .content-area {
+            visibility: hidden;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Helvetica Neue', Arial, sans-serif; /* Font sans-serif untuk judul agar kontras */
+            color: #000;
+            text-align: left;
+            font-weight: 700;
+        }
+
+        h2 { /* Judul Bagian */
+            font-size: 1.8em;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+            margin-top: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h3 { /* Judul Bab */
+            font-size: 1.5em;
+            color: #333;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        h4 { /* Sub-bab */
+            font-size: 1.2em;
+            color: #444;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Indentasi paragraf pertama setelah paragraf lain */
+        p + p,
+        ul + p,
+        table + p,
+        .quote + p,
+        .tip + p,
+        .case-study + p {
+            text-indent: 1.5em;
+        }
+
+        p {
+            margin: 0.5em 0;
+        }
+        
+        ul, ol {
+            padding-left: 2em;
+        }
+        
+        li {
+            margin-bottom: 0.5em;
+        }
+
+        /* Styling elemen khusus */
+        .quote {
+            font-style: italic;
+            text-align: center;
+            margin: 2em 1.5em;
+            padding: 1em;
+            border-top: 1px solid #eee;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+        
+        .tip {
+            background-color: #fefbed;
+            border-left: 4px solid #f0e68c;
+            padding: 1em 1.5em;
+            margin: 1.5em 0;
+            font-size: 0.95em;
+            border-radius: 25px;
+        }
+
+        .case-study, .example {
+            background-color: #f4f4f4;
+            border-left: 4px solid #aaa;
+            padding: 1em 1.5em;
+            margin: 1.5em 0;
+            font-style: italic;
+            border-radius: 25px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5em 0;
+            font-size: 0.9em;
+            text-align: left;
+        }
+
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+        }
+
+        th {
+            background-color: #f0f0f0;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            font-weight: 600;
+        }
+
+        /* --- NAVIGASI (REVISI) --- */
+        .nav-buttons {
+            position: fixed;
+            top: 50%; /* Posisikan di tengah layar (vertikal) */
+            right: 20px; /* Jarak dari kanan */
+            transform: translateY(-50%); /* Penyesuaian agar pas di tengah */
+            
+            background: rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            border-radius: 25px; /* Sesuai permintaan */
+            
+            display: flex;
+            flex-direction: column; /* Ubah jadi vertikal */
+            gap: 15px;
+            z-index: 100;
+            
+            /* Style show/hide (opacity, visibility) sudah dihapus */
+        }
+
+        .nav-buttons button {
+            font-size: .0.9em;
+            padding: 9px 13px;
+            background: #212121;
+            color: white;
+            border: none;
+            border-radius: 25px; /* Sesuai permintaan */
+            cursor: pointer;
+            font-family: Arial, sans-serif;
+            font-weight: bold;
+        }
+
+        .nav-buttons button:hover:not(:disabled) {
+            background: white;
+            color: black;
+        }
+        
+        .nav-buttons button:disabled {
+            background: #777;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        /* --- RESPONSIVE (Tampilan HP) --- */
+        @media (max-width: 900px) {
+            body {
+                background-color: #fdfaf4; /* Latar jadi warna kertas */
+                overflow-y: auto; /* Izinkan scroll di body */
+                display: block;
+            }
+
+            .book-spread {
+                display: block; /* Halaman menumpuk */
+                width: 100%;
+                height: auto;
+                max-height: none;
+                box-shadow: none;
+            }
+
+            .page {
+                width: 100%;
+                height: auto;
+                min-height: 90vh; /* Setidaknya setinggi layar */
+                overflow-y: visible;
+                padding: 1.5rem;
+                /* Beri ruang di kanan agar tombol tidak menutupi teks */
+                padding-right: 70px; 
+                box-shadow: none;
+                border: none !important; /* Hapus semua border */
+            }
+
+            /* Di HP, kita hanya tampilkan 1 halaman sekali 'balik' */
+            /* Halaman kanan akan disembunyikan oleh JS */
+            .page.right {
+                display: none; 
+            }
+            
+            .page-number {
+                position: static;
+                text-align: center;
+                margin-top: 2rem;
+            }
+            
+            .cover-page .content-area {
+                min-height: 80vh;
+            }
+
+            .nav-buttons {
+                /* Tetap di kanan, tapi jaraknya sedikit beda */
+                right: 10px; 
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="book-spread">
+        <div class="page left">
+            <div class="content-area">
+                </div>
+            <div class="page-number"></div>
+        </div>
+        <div class="page right">
+            <div class="content-area">
+                </div>
+            <div class="page-number"></div>
+        </div>
+    </div>
+
+    <div class="nav-buttons">
+        <button id="prev-page"><</button>
+        <button id="next-page">></button>
+    </div>
+
+
+    <div id="content-store" style="display: none;">
+
+        <div class="page-content cover-page" data-page-type="cover">
+            <img src="content://media/external/images/media/9584" width="100%" height="auto">
+        </div>
+
+        <div class="page-content blank-page">
+        </div>
+
+        <div class="page-content">
+            <p>Halo, calon Raja/Ratu Digital!</p>
+            <p>Selamat datang di peta jalan yang akan mengubah cara Anda bekerja dan menghasilkan uang. Jika saat ini Anda masih menjual waktu per jam sebagai freelancer, atau jika Anda seorang kreator yang <i>burnout</i> karena harus selalu membuat konten baru, Anda datang ke tempat yang tepat.</p>
+            <p>Saya, Destra, ada di sini bukan hanya sebagai penulis, tetapi sebagai mentor digital yang siap membimbing Anda.</p>
+            <p>Dunia digital telah berubah. <b>aset terbaik bukanlah uang di bank, melainkan sistem yang bekerja tanpa kehadiran fisik Anda.</b> Itulah esensi dari Produk Digital.</p>
+        </div>
+        
+        <div class="page-content">
+            <p>Ebook "Digital Product Empire" ini dirancang untuk satu tujuan: memberi Anda panduan lengkap, langkah demi langkah, untuk mengubah keahlian, pengetahuan, atau kreativitas Anda menjadi produk digital yang menghasilkan pendapatan pasif berkelanjutan—sebuah kerajaan digital milik Anda sendiri.</p>
+            <p>Kami akan membahas segalanya, mulai dari mengubah pola pikir Anda yang tadinya hanya seorang pekerja (<i>doer</i>) menjadi pemilik (<i>owner</i>), hingga strategi pemasaran otomatis yang mampu menjual produk Anda bahkan saat Anda sedang tidur atau berlibur.</p>
+            <p>Mari kita tinggalkan pola pikir lama yang membatasi. Saatnya membangun aset digital yang membebaskan Anda!</p>
+            
+            <div class="quote">
+                <p>“Masa depan adalah milik mereka yang percaya pada keindahan mimpi-mimpi mereka.”</p>
+                – Eleanor Roosevelt
+            </div>
+        </div>
+
+        <div class="page-content">
+            <h2>Daftar Isi</h2>
+            <table class="toc-table">
+                <thead>
+                    <tr>
+                        <th>Bagian & Bab</th>
+                        <th>Halaman</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td><b>I. Mindset Kerajaan Digital</b></td><td></td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 1: Dari Freelancer Menjadi Founder: Perubahan Pola Pikir</td><td>1.</td></tr>
+                    <tr><td><b>II</b></td><td>3.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 2: Menemukan 'Lubang Emas' di Pasar (Riset Niche)</td><td>4.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 3: Mengamankan Pondasi Hukum dan Branding Awal</td><td>8.</td></tr>
+                    <tr><td><b>III</b></td><td>12.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 4: Proses Produksi Produk Digital (Sistematis)</td><td>13.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 5: Visual dan Daya Tarik Profesional</td><td>17.</td></tr>
+                    <tr><td><b>IV</b></td><td>22.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 6: Peluncuran Awal dan Validasi Harga</td><td>23.</td></tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="page-content">
+             <h2>Daftar Isi (Lanjutan)</h2>
+            <table class="toc-table">
+                <thead>
+                    <tr>
+                        <th>Bagian & Bab</th>
+                        <th>Halaman</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 7: Mesin Pemasaran Digital</td><td>27.</td></tr>
+                    <tr><td><b>V</b></td><td>32.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 8: Otomatisasi dan Sistem Penjualan</td><td>33.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 9: Diversifikasi Produk (The Product Ladder)</td><td>38.</td></tr>
+                    <tr><td><b>VI</b></td><td>44.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 10: Mengukur, Menganalisis, dan Mengembangkan</td><td>45.</td></tr>
+                    <tr><td>&nbsp;&nbsp;&nbsp;Bab 11: Masa Depan Empire Anda: Ekspansi dan Inovasi</td><td>50.</td></tr>
+                    <tr><td><b>Penutup & CTA</b></td><td>55.</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="page-content">
+            <h2>Bagian 1 — Mindset Kerajaan Digital</h2>
+            <h3>Bab 1: Dari Freelancer Menjadi Founder: Perubahan Pola Pikir</h3>
+            
+            <h4>1.1. Jebakan 'Jual Waktu per Jam'</h4>
+            <p>Banyak dari kita memulai di dunia digital dengan menjual waktu—baik sebagai desainer, penulis, atau konsultan. Ini adalah model bisnis <i>linear</i>: semakin banyak jam kerja, semakin banyak uang yang Anda hasilkan. Namun, model ini punya langit-langit yang jelas, yaitu 24 jam sehari. Freelancer menjual layanan. Founder menjual solusi berupa aset.</p>
+            <p>Produk digital memutus batasan waktu ini. Sekali produk dibuat (e-book, kursus, template), produk itu bisa dijual berkali-kali tanpa memerlukan input waktu tambahan dari Anda. Ini bukan lagi tentang menjual waktu, tetapi menjual lisensi akses ke solusi yang Anda ciptakan.</p>
+            
+            <h4>1.2. Kekuatan Pendapatan Pasif</h4>
+            <p>Pendapatan pasif dalam konteks produk digital berarti bahwa biaya waktu (<i>time cost</i>) yang dikeluarkan untuk membuat produk pertama kali sangat tinggi, namun biaya waktu untuk menjual produk kedua, ketiga, dan seterusnya, hampir nol. Ini adalah daya ungkit (<i>leverage</i>) terbesar di era digital.</p>
+        </div>
+
+        <div class="page-content">
+            <div class="case-study">
+                <b>Studi Kasus: Ebook yang Terjual Ribuan Kali</b>
+                <p>Maya, seorang pakar keuangan muda, menghabiskan 3 bulan untuk menulis e-book setebal 150 halaman tentang manajemen utang untuk milenial. Setelah diluncurkan, ia mengintegrasikannya ke sistem email otomatis dan menjualnya melalui iklan kecil. Selama 1,5 tahun, Maya tidak menyentuh e-book itu lagi, namun ia telah menjual lebih dari 5.000 kopi, menghasilkan pendapatan stabil $500–$800 per bulan. Aset bekerja, Maya bebas.</p>
+            </div>
+            
+            <h4>1.3. Mindset Sang Raja</h4>
+            <p>Untuk membangun <i>empire</i>, Anda harus mengadopsi tiga pilar mindset ini:</p>
+            <ul>
+                <li><b>Berpikir Jangka Panjang (Long-Term Vision):</b> Jangan fokus pada cuan cepat, tapi fokus pada nilai yang berkelanjutan. Produk digital adalah investasi aset, bukan uang tunai mendadak.</li>
+                <li><b>Problem Solver Sejati:</b> Produk digital terbaik menyelesaikan masalah yang menyakitkan. Alih-alih bertanya, "Apa yang bisa saya jual?", tanyakan, "<i>Masalah spesifik apa yang bisa saya selesaikan untuk kelompok orang tertentu?</i>"</li>
+                <li><b>Berani Gagal Cepat (Fail Fast):</b> Kesempurnaan itu musuh terbesar progress. Luncurkan MVP (Minimum Viable Product) Anda, terima umpan balik, perbaiki, dan luncurkan lagi. Jangan tunggu sampai "sempurna."</li>
+            </ul>
+            
+            <div class="tip">
+                <b>💡 Tips Praktis Bab 1</b>
+                <ul>
+                    <li><b>Latihan '5 Tahun ke Depan':</b> Visualisasikan hari kerja ideal Anda 5 tahun dari sekarang jika Anda memiliki pendapatan pasif yang stabil. Tuliskan 3 hal yang Anda lakukan setiap hari yang TIDAK berhubungan dengan bekerja. Jadikan itu motivasi harian Anda.</li>
+                </ul>
+            </div>
+            
+            <p><b>Ringkasan Bab 1:</b> Pindah dari <i>doer</i> (pelaku) menjadi <i>owner</i> (pemilik aset). Produk digital adalah tiket Anda menuju kebebasan waktu dan finansial, asalkan Anda mau mengubah pola pikir dari menjual jam kerja menjadi menjual solusi yang terstruktur.</p>
+        </div>
+
+        <div class="page-content">
+            <h2>Bagian 2 — Ide & Pondasi Produk Digital</h2>
+            <h3>Bab 2: Menemukan 'Lubang Emas' di Pasar (Riset Niche)</h3>
+            
+            <h4>2.1. Niche vs. Pasar Masal</h4>
+            <p>Pasar masal (misalnya: "Belajar Marketing") itu ramai dan kompetitif. Niche (misalnya: "<i>Strategi Marketing TikTok untuk Pengrajin Lilin Aromaterapi</i>") itu spesifik dan mudah ditargetkan. Niche yang spesifik = <i>profit</i> yang maksimal. Ketika Anda berbicara ke semua orang, Anda tidak berbicara kepada siapa pun.</p>
+            <p>Ketika Anda berbicara kepada <i>seseorang</i> (niche), mereka merasa Anda memahami masalah mereka secara mendalam.</p>
+            
+            <h4>2.2. Riset Pasar Anti-Gagal</h4>
+            <p>Jangan membuat produk berdasarkan asumsi. Lakukan riset!</p>
+            <ul>
+                <li><b>Google Trends & Kata Kunci:</b> Cari tren topik yang sedang naik daun di bidang Anda.</li>
+                <li><b>Forum Online (Reddit/Komunitas FB/Kaskus):</b> Lihat keluhan dan pertanyaan yang paling sering diulang. <i>Keluhan yang berulang = peluang produk digital.</i></li>
+                <li><b>Analisis Kompetitor:</b> Kunjungi Gumroad, Etsy, Udemy, atau Teachable. Lihat produk apa yang laku. Baca ulasan yang kurang memuaskan. Kekurangan kompetitor adalah celah produk Anda.</li>
+            </ul>
+        </div>
+        
+        <div class="page-content">
+            <h4>2.3. Menentukan MVP (Minimum Viable Product)</h4>
+            <p>MVP adalah produk digital versi paling minimal yang masih memberikan nilai penuh dan dapat dijual. Tujuannya adalah memvalidasi permintaan pasar sebelum Anda menghabiskan ratusan jam untuk produksi.</p>
+            
+            <div class="example">
+                <b>Contoh Nyata:</b>
+                <p>Rio adalah seorang freelancer yang pandai membuat <i>mockup</i> produk digital. Alih-alih membuat kursus <i>full stack</i> desain, ia membuat "<i>Paket 5 Template Mockup Minimalis Canva</i>" dan menjualnya seharga $10. Ia mengumpulkan feedback, memperbaiki, dan baru setelah laku 100 kopi, ia membuat kursus lengkap tentang <i>mockup</i> sebagai <i>core product</i>. Rio menghindari risiko menghabiskan 3 bulan untuk kursus yang belum tentu diminati.</p>
+            </div>
+            
+            <div class="quote">
+                <p>“Jangan tunggu sampai sempurna, karena sempurna itu musuh dari selesai. Segera luncurkan MVP Anda!”</p>
+            </div>
+        </div>
+
+        <div class="page-content">
+            <h3>Bab 3: Mengamankan Pondasi Hukum dan Branding Awal</h3>
+            
+            <h4>3.1. Legalitas Sederhana</h4>
+            <p>Anda harus melindungi aset Anda.</p>
+            <ul>
+                <li><b>Hak Cipta (HAKI):</b> Daftarkan e-book, kursus, atau <i>software</i> Anda ke lembaga terkait (walau proses ini bervariasi per negara, niat untuk melindungi sudah jauh lebih baik).</li>
+                <li><b><i>Disclaimer</i> Wajib:</b> Selalu sertakan <i>disclaimer</i> yang menyatakan bahwa produk Anda adalah panduan/alat, dan hasilnya tergantung pada upaya individu. Ini penting, terutama untuk produk keuangan, kesehatan, atau hukum.</li>
+                <li><b>Kebijakan Pengembalian Dana:</b> Tentukan aturan yang jelas. Kebijakan yang transparan membangun kepercayaan.</li>
+            </ul>
+            
+            <h4>3.2. Nama Empire Anda</h4>
+            <p>Branding adalah janji Anda kepada pelanggan.</p>
+            <ul>
+                <li><b>Nama Produk/Brand:</b> Harus mudah diucapkan, relevan dengan niche, dan tersedia di media sosial/domain.</li>
+                <li><b>Visi:</b> Tentukan satu kalimat yang menjelaskan apa yang dilakukan <i>empire</i> Anda (Contoh: "Kami membantu kreator digital mengubah hobi jadi mesin uang").</li>
+            </ul>
+        </div>
+        
+        <div class="page-content">
+            <h4>3.3. Mengidentifikasi Audiens Ideal (Avatar Pelanggan)</h4>
+            <p>Anda harus tahu persis untuk siapa Anda membangun <i>empire</i> ini. Buat <i>Avatar Pelanggan</i> dengan detail:</p>
+            <ul>
+                <li><b>Nama:</b> (Contoh: Budi, 28 tahun)</li>
+                <li><b>Pekerjaan/Peran:</b> (Freelancer Desain)</li>
+                <li><b>Masalah/Rasa Sakit Terbesar:</b> (Kelelahan bekerja dengan klien <i>toxic</i>, harga ditawar, tidak punya <i>passive income</i>.)</li>
+                <li><b>Harapan/Impian:</b> (Meninggalkan klien, punya pendapatan pasif $1000/bulan, bebas waktu.)</li>
+            </ul>
+            
+            <div class="tip">
+                <b>💡 Tips Praktis Bab 3</b>
+                <ul>
+                    <li><b>Wawancara 5 Calon Pelanggan:</b> Cari 5 orang yang cocok dengan avatar pelanggan Anda. Berikan produk digital Anda secara gratis, dan tanyakan 3 hal:</li>
+                    <ol>
+                        <li>Apa masalah terbesar Anda saat ini di bidang X?</li>
+                        <li>Apa yang membuat Anda ragu membeli solusi digital?</li>
+                        <li>Apakah produk saya menyelesaikan masalah itu? (Kumpulkan testimoni jujur).</li>
+                    </ol>
+                </ul>
+            </div>
+            
+            <p><b>Ringkasan Bagian 2:</b> Produk digital yang sukses lahir dari riset mendalam di niche yang spesifik. Lindungi aset Anda dengan <i>branding</i> yang kuat dan legalitas sederhana, dan pastikan Anda tahu persis siapa target market Anda.</p>
+        </div>
+
+        <div class="page-content">
+            <h2>Bagian 3 — Produksi & Branding</h2>
+            <h3>Bab 4: Proses Produksi Produk Digital (Sistematis)</h3>
+            
+            <h4>4.1. Berbagai Format Produk Digital</h4>
+            <p>Pilih format yang paling efisien dengan keahlian Anda:</p>
+            
+            <table>
+                <thead>
+                    <tr>
+                        <th>Format Produk</th>
+                        <th>Cocok Untuk</th>
+                        <th>Keunggulan Jual</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>E-book/Checklist</td>
+                        <td>"Pengetahuan dasar, panduan teknis, <i>lead magnet</i>. "</td>
+                        <td>"Cepat dibuat, biaya produksi nol, mudah didistribusi. "</td>
+                    </tr>
+                    <tr>
+                        <td>Kursus Online</td>
+                        <td>"Keahlian mendalam, <i>mentorship</i>, komunitas. "</td>
+                        <td>"Harga premium, <i>value</i> tinggi, potensi <i>upsell</i>. "</td>
+                    </tr>
+                    <tr>
+                        <td>Template/Preset</td>
+                        <td>"Desainer, fotografer, kreator media sosial. "</td>
+                        <td>"Sangat pasif, menghilangkan pekerjaan teknis pelanggan. "</td>
+                    </tr>
+                    <tr>
+                        <td>Software/Plugin</td>
+                        <td>Solusi teknis otomatis (untuk <i>coder</i>).</td>
+                        <td>"Harga tertinggi, menciptakan <i>lock-in</i> pelanggan. "</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div class="page-content">
+            <h4>4.2. Strategi Konten Berkualitas</h4>
+            <p>Kualitas produk digital Anda adalah fondasi <i>empire</i>. Ikuti prinsip ini:</p>
+            <ul>
+                <li><b>Actionable:</b> Pastikan setiap bab/modul dapat langsung dipraktikkan. Hindari teori berkepanjangan.</li>
+                <li><b>Struktur Logis:</b> Mulai dari dasar (pengenalan), inti (solusi), hingga penutup (langkah selanjutnya).</li>
+                <li><b>Format yang Ramah Pembaca:</b> Gunakan <i>bullet point</i>, tabel, dan subjudul yang jelas. Khusus untuk e-book, jaga agar paragraf tidak terlalu panjang.</li>
+            </ul>
+            
+            <div class="case-study">
+                <b>Studi Kasus: Template Laku Keras</b>
+                <p>Fajar adalah seorang <i>social media manager</i> yang kelelahan. Ia melihat banyak UMKM kesulitan membuat <i>caption</i> IG yang menjual. Ia menghabiskan 1 bulan membuat "<i>50 Template Caption Jual Baju Muslim untuk Hari Raya</i>". Produknya laku 2.000+ kali dalam satu musim, karena ia mengubah pengetahuan (skill) menjadi <i>alat</i> yang menghemat waktu pelanggan.</p>
+            </div>
+            
+            <h4>4.3. Tools Wajib Kreator Digital (Gratis & Berbayar Ringan)</h4>
+            <ul>
+                <li><b>Desain Konten/Ebook:</b> Canva, Figma (Gratis/Freemium).</li>
+                <li><b>Platform Kursus:</b> Teachable, Kajabi (Berbayar—untuk fitur <i>full funnel</i>).</li>
+                <li><b>Pengiriman Otomatis Produk:</b> Gumroad, Payhip, SendOwl (Gratis/Komisi).</li>
+            </ul>
+        </div>
+        
+        <div class="page-content">
+            <h3>Bab 5: Visual dan Daya Tarik Profesional</h3>
+            
+            <h4>5.1. Desain Sampul dan Mockup</h4>
+            <p>Orang menilai buku dari sampulnya, dan mereka menilai produk digital dari <i>mockup</i>-nya.</p>
+            <ul>
+                <li><b>Mockup Profesional:</b> Gunakan mockup 3D (seperti e-book yang terlihat nyata, atau <i>screenshot</i> kursus yang terlihat di laptop) untuk memberikan kesan <i>fisik</i> pada produk digital Anda.</li>
+                <li><b>Aturan Warna:</b> Gunakan skema warna branding Anda (Biru Muda & Putih) secara konsisten untuk menciptakan kesan <i>trust</i> dan modern.</li>
+            </ul>
+            
+            <h4>5.2. Konsistensi Branding</h4>
+            <p>Logo, font, dan nada suara Anda harus seragam di mana pun produk itu muncul. Konsistensi membangun profesionalisme.</p>
+            
+            <h4>5.3. Membuat 'Halaman Penjualan' (Landing Page) yang Menghipnotis</h4>
+            <p><i>Landing Page</i> adalah <i>salesman</i> digital Anda yang bekerja 24 jam.</p>
+        </div>
+
+        <div class="page-content">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Elemen Wajib</th>
+                        <th>Fokus</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Headline Kuat</td>
+                        <td>"Jual Hasil, bukan Fitur. (Contoh: ""Hasilkan $1000 Pertama Anda dalam 30 Hari"")"</td>
+                    </tr>
+                    <tr>
+                        <td>Visual Meyakinkan</td>
+                        <td>Tampilkan pratinjau produk (bukan hanya teks).</td>
+                    </tr>
+                    <tr>
+                        <td>Copywriting Manfaat</td>
+                        <td>"Jelaskan bagaimana produk mengubah hidup, bukan hanya apa yang ada di dalamnya. "</td>
+                    </tr>
+                    <tr>
+                        <td>Social Proof</td>
+                        <td>"Testimoni, rating, logo perusahaan (jika ada). "</td>
+                    </tr>
+                    <tr>
+                        <td>CTA Jelas</td>
+                        <td>"Gunakan tombol yang kontras, dengan teks yang spesifik: "" Dapatkan Akses Sekarang "" atau "" Saya Mau Income Pasif! "" "</td>
+                    </tr>
+                </tbody>
+            </table>
+            
+            <div class="tip">
+                <b>💡 Tips Praktis Bab 5</b>
+                <p><b>AIDA di Landing Page:</b> Terapkan formula AIDA:</p>
+                <ul>
+                    <li><b>A</b>ttention: Headline yang memukau.</li>
+                    <li><b>I</b>nterest: Poin masalah audiens.</li>
+                    <li><b>D</b>esire: Manfaat dan <i>social proof</i>.</li>
+                    <li><b>A</b>ction: CTA yang tidak bisa ditolak.</li>
+                </ul>
+            </div>
+            
+            <p><b>Ringkasan Bagian 3:</b> Produksi harus sistematis, mengubah <i>skill</i> menjadi <i>alat</i> bagi pelanggan. Presentasi visual (mockup) yang profesional dan <i>landing page</i> yang persuasif adalah kunci konversi.</p>
+        </div>
+
+        <div class="page-content">
+            <h2>Bagian 4 — Penjualan & Marketing</h2>
+            <h3>Bab 6: Peluncuran Awal dan Validasi Harga</h3>
+            
+            <h4>6.1. Strategi Pricing Tepat</h4>
+            <p>Jangan pakai <i>Cost-Based Pricing</i> (harga berdasarkan biaya). Pakai <i>Value-Based Pricing</i> (harga berdasarkan nilai yang Anda berikan). Jika produk Anda membantu orang menghasilkan $10.000, apakah wajar menjualnya $100? Tentu! Tentukan harga berdasarkan nilai solusi.</p>
+            
+            <h4>6.2. Uji Coba Beta dan Feedback Awal</h4>
+            <p>Sebelum peluncuran besar:</p>
+            <ul>
+                <li><b>Beta Tester:</b> Jual ke 10-20 orang pertama dengan diskon besar (atau gratis, jika perlu) dengan syarat mereka memberikan testimoni jujur dan mendetail.</li>
+                <li><b>Perbaiki:</b> Gunakan umpan balik ini untuk memperbaiki kelemahan produk dan meningkatkan <i>copy</i> di <i>landing page</i>.</li>
+            </ul>
+            
+            <h4>6.3. Teknik Peluncuran Sederhana (The Low-Effort Launch)</h4>
+            <p>Tidak perlu pesta besar-besaran untuk peluncuran. Gunakan aset yang sudah Anda miliki:</p>
+            <ul>
+                <li><b>Email List:</b> Kirim 3-5 email bertahap (perkenalan masalah, solusi, dan penawaran waktu terbatas) ke <i>list</i> email Anda.</li>
+                <li><b>Komunitas Kecil:</b> Umumkan di grup media sosial atau komunitas Anda dengan penawaran eksklusif.</li>
+            </ul>
+            
+            <div class="quote">
+                <p>“Penjualan terbaik datang bukan dari penawaran, tetapi dari kepercayaan.”</p>
+                 – Destra Mandala Key Saputra
+            </div>
+        </div>
+
+        <div class="page-content">
+            <h3>Bab 7: Mesin Pemasaran Digital</h3>
+            
+            <h4>7.1. Content Marketing sebagai Fondasi Empire</h4>
+            <p>Buat konten gratis yang relevan dengan produk Anda. Konten ini berfungsi sebagai <i>magnet</i> untuk menarik audiens yang tepat.</p>
+            <ul>
+                <li><b>Konten Edukasi:</b> Video YouTube, blog, atau <i>thread</i> Twitter yang membahas masalah yang dipecahkan oleh produk Anda.</li>
+                <li><b>Konten <i>Lead Magnet</i>:</b> Buat <i>freebie</i> (misalnya: Checklist 5 Langkah) untuk ditukar dengan alamat email. Ini adalah langkah krusial untuk membangun aset Anda.</li>
+            </ul>
+            
+            <h4>7.2. Kekuatan Email Marketing</h4>
+            <p>List email Anda adalah aset digital terpenting Anda. <i>Anda tidak mengontrol algoritma media sosial, tetapi Anda mengontrol kotak masuk email pelanggan Anda.</i></p>
+            <ul>
+                <li><b>Otomatisasi Sequence:</b> Buat urutan email yang otomatis terkirim setelah seseorang mendaftar <i>lead magnet</i>. Urutan ini harus:</li>
+                <ol>
+                    <li>Memberikan nilai (edukasi).</li>
+                    <li>Membangun kepercayaan.</li>
+                    <li>Memperkenalkan produk digital Anda sebagai solusi.</li>
+                </ol>
+            </ul>
+        </div>
+
+        <div class="page-content">
+            <h4>7.3. Pemasaran Afiliasi (Afiliasi sebagai Pasukan Penjual)</h4>
+            <p>Afiliasi adalah jalan pintas menuju skala. Anda memberikan komisi kepada orang lain untuk setiap penjualan yang mereka hasilkan.</p>
+            
+            <div class="example">
+                <b>Contoh Nyata:</b>
+                <p>Andre membuat <i>Software-as-a-Service</i> (SaaS) kecil. Daripada menghabiskan uang untuk iklan Facebook, ia merekrut 50 <i>influencer</i> di niche-nya. Ia menawarkan komisi 30% per penjualan. Dalam 6 bulan, afiliasi menghasilkan 70% dari total penjualannya. Andre hanya perlu fokus pada <i>support</i> dan produk, bukan jualan.</p>
+            </div>
+            
+            <div class="tip">
+                <b>💡 Tips Praktis Bab 7</b>
+                <p><b>Email Otomatis Wajib:</b> Setidaknya miliki 3 email otomatis yang siap kirim:</p>
+                <ul>
+                    <li><b>Welcome Email:</b> Sambutan dan pengiriman <i>lead magnet</i>.</li>
+                    <li><b>Value Email:</b> Berikan tips berharga (edukasi mendalam terkait masalah mereka).</li>
+                    <li><b>Sales Email:</b> Perkenalkan produk berbayar Anda sebagai solusi akhir (dengan <i>sense of urgency</i>).</li>
+                </ul>
+            </div>
+            
+            <p><b>Ringkasan Bagian 4:</b> Jual produk yang Anda buat. Validasi harga dengan nilai, bukan biaya. Gunakan <i>Content Marketing</i> untuk <i>traffic</i>, dan <i>Email Marketing</i> untuk konversi. Afiliasi adalah cara tercepat untuk mereplika penjualan Anda.</p>
+        </div>
+
+        <div class="page-content">
+            <h2>Bagian 5 — Membangun Empire</h2>
+            <h3>Bab 8: Otomatisasi dan Sistem Penjualan</h3>
+            
+            <h4>8.1. Membangun Funnel Penjualan Otomatis</h4>
+            <p><i>Funnel</i> (corong) adalah sistem yang mengubah prospek menjadi pelanggan secara otomatis.</p>
+            <p><b>Pentingnya Otomatisasi:</b></p>
+            <ol>
+                <li><b>Lead Magnet:</b> Menarik perhatian (misalnya: <i>Template Gratis</i>).</li>
+                <li><b>Landing Page:</b> Tempat konversi terjadi.</li>
+                <li><b>Email Sequence:</b> Membangun hubungan dan menjual.</li>
+                <li><b>Payment Gateway:</b> Menerima pembayaran (PayPal, Midtrans, Stripe, dll.).</li>
+                <li><b>Product Delivery:</b> Pengiriman produk (otomatis terkirim melalui email atau akses ke member area).</li>
+            </ol>
+            
+            <h4>8.2. Memanfaatkan Tools Otomatisasi (Zapier, IFTTT, dll)</h4>
+            <p>Gunakan alat penghubung seperti Zapier untuk memastikan semua sistem Anda "berbicara" satu sama lain:</p>
+            <div class="example">
+                <b>Contoh Otomatisasi:</b>
+                <p>Setiap kali ada penjualan di Gumroad, secara otomatis tambahkan nama pembeli ke <i>list</i> email premium Anda di Mailchimp, dan kirimkan <i>invoice</i> melalui email.</p>
+            </div>
+            <p>Otomatisasi membebaskan Anda dari tugas-tugas berulang (admin) dan memungkinkan Anda fokus pada strategi besar (ekspansi).</p>
+        </div>
+        
+        <div class="page-content">
+            <h4>8.3. Customer Service sebagai Pembangun Loyalitas</h4>
+            <p>Meski otomatis, pelanggan tetap butuh sentuhan manusia.</p>
+            <ul>
+                <li><b>Sistem FAQ Otomatis:</b> Sediakan daftar pertanyaan yang sering diajukan di <i>landing page</i> dan <i>member area</i> Anda.</li>
+                <li><b>Respons Cepat:</b> Gunakan <i>auto-responder</i> email untuk menjawab pertanyaan dasar. Targetkan waktu respons 1x24 jam untuk pertanyaan yang kompleks.</li>
+            </ul>
+            <p>Layanan pelanggan yang hebat mengubah pembeli sekali menjadi pembeli seumur hidup.</p>
+            
+            <h3>Bab 9: Diversifikasi Produk (The Product Ladder)</h3>
+            
+            <h4>9.1. Konsep Tangga Produk (The Product Ladder)</h4>
+            <p>Anda tidak bisa hanya menjual satu produk. <i>Empire</i> dibangun di atas penawaran yang berjenjang:</p>
+        </div>
+
+        <div class="page-content">
+            <ul>
+                <li><b>Lead Magnet (Gratis):</b> Checklist, <i>free e-book</i>, template gratis. Tujuannya: Mengumpulkan email.</li>
+                <li><b>Tripwire (Murah, $7–$27):</b> Produk dengan harga rendah yang berfungsi mengubah prospek menjadi pelanggan pertama. (Contoh: <i>Mini-Course</i> 1 jam).</li>
+                <li><b>Core Product (Utama, $97–$497):</b> Produk yang menjadi solusi utama (Kursus lengkap, <i>software</i>).</li>
+                <li><b>High-Ticket (Premium, $997+):</b> Penawaran terbatas dan bernilai sangat tinggi (Private Coaching, Mentorship Group, Lisensi Bisnis).</li>
+            </ul>
+            
+            <h4>9.2. Strategi Upsell dan Cross-sell</h4>
+            <p>Setelah seseorang membeli <i>Core Product</i>, inilah saatnya untuk meningkatkan <i>Average Order Value</i> (AOV).</p>
+            <ul>
+                <li><b>Upsell:</b> Menawarkan versi produk yang lebih mahal/lengkap (Contoh: <i>Upgrade</i> dari e-book ke kursus).</li>
+                <li><b>Cross-sell:</b> Menawarkan produk pelengkap (Contoh: Setelah membeli Template Canva, tawarkan Preset Lightroom Anda).</li>
+            </ul>
+            
+            <div class="case-study">
+                <b>Studi Kasus: Peningkatan AOV 40%</b>
+                <p>Tina, seorang <i>coach</i> bisnis, menjual kursus utama seharga $197. Di halaman terima kasih, ia menambahkan <i>penawaran terbatas 15 menit</i> untuk <i>Sesi Strategi 1-on-1</i> (<i>High-Ticket</i>) seharga $497. Ia menjual 4 sesi tambahan per bulan, meningkatkan omzetnya 40% hanya dengan satu halaman <i>upsell</i> sederhana.</p>
+            </div>
+            
+            <div class="tip">
+                <b>💡 Tips Praktis Bab 9</b>
+                <ul>
+                    <li><b>Tentukan 4 Level Produk Anda:</b> Ambil keahlian utama Anda dan pecah menjadi 4 penawaran yang berjenjang. Ini memastikan Anda memaksimalkan nilai dari setiap pelanggan yang masuk ke <i>empire</i> Anda.</li>
+                </ul>
+            </div>
+            
+            <p><b>Ringkasan Bagian 5:</b> <i>Empire</i> dibangun di atas sistem otomatisasi yang efisien dan <i>funnel</i> penjualan yang terstruktur. Diversifikasi dengan Tangga Produk adalah kunci untuk meningkatkan pendapatan dari setiap pelanggan.</p>
+        </div>
+
+        <div class="page-content">
+            <h2>Bagian 6 — Skalabilitas & Ekspansi</h2>
+            <h3>Bab 10: Mengukur, Menganalisis, dan Mengembangkan</h3>
+            
+            <h4>10.1. Metrik Penting Empire Digital</h4>
+            <p>Jika Anda tidak mengukur, Anda tidak bisa berkembang. Ini adalah metrik yang harus Anda pantau:</p>
+            <ul>
+                <li><b>Conversion Rate (CR):</b> Persentase orang yang mengunjungi <i>landing page</i> yang berubah menjadi pembeli. (Target: Minimal 2%).</li>
+                <li><b>Customer Acquisition Cost (CAC):</b> Berapa biaya yang Anda keluarkan untuk mendapatkan 1 pelanggan.</li>
+                <li><b>Lifetime Value (LTV):</b> Total pendapatan rata-rata yang Anda dapatkan dari 1 pelanggan selama mereka berinteraksi dengan <i>empire</i> Anda (LTV harus lebih tinggi dari CAC!).</li>
+            </ul>
+            
+            <h4>10.2. A/B Testing untuk Peningkatan Konversi</h4>
+            <p>Jangan berasumsi, uji! <i>A/B testing</i> adalah proses menguji dua versi (<i>A</i> dan <i>B</i>) dari satu elemen untuk melihat mana yang berkonversi lebih baik.</p>
+            <ul>
+                <li><b>Apa yang diuji?</b> Headline, CTA (Call to Action), harga, warna tombol.</li>
+                <li><b>Contoh:</b> Uji Headline A: "<i>Kursus Cepat Jadi Kaya</i>" vs. Headline B: "<i>Hasilkan Rp5 Juta Pertama Anda dalam 30 Hari</i>". Uji selama 7 hari, lihat mana yang menang, dan gunakan yang menang secara permanen.</li>
+            </ul>
+        </div>
+        
+        <div class="page-content">
+            <h4>10.3. Mengembangkan Tim Digital (Outsourcing)</h4>
+            <p>Seorang raja sejati tahu kapan harus mendelegasikan.</p>
+            <ul>
+                <li><b>Kapan Mendelegasikan?</b> Ketika tugas memakan waktu Anda (seperti <i>customer service</i> dasar, desain <i>mockup</i>, atau manajemen iklan) yang seharusnya Anda gunakan untuk fokus pada strategi dan pengembangan produk.</li>
+                <li><b>Fokus pada <i>High-Leverage Task</i>:</b> Anda harus menghabiskan waktu Anda untuk riset produk baru dan strategi pemasaran, bukan menjawab email.</li>
+            </ul>
+            
+            <h3>Bab 11: Masa Depan Empire Anda: Ekspansi dan Inovasi</h3>
+            
+            <h4>11.1. Menangkap Tren Baru</h4>
+            <p>Dunia digital bergerak cepat. Jangan biarkan <i>empire</i> Anda menjadi usang.</p>
+            <ul>
+                <li><b>Integrasi AI:</b> Bisakah produk Anda ditingkatkan dengan integrasi AI (misalnya: <i>Prompt</i> AI untuk e-book, atau fitur <i>chatbot</i> di kursus Anda)?</li>
+                <li><b>Inovasi Format:</b> Jika Anda menjual e-book, bisakah Anda mengubahnya menjadi <i>interactive workbook</i> atau <i>video series</i>?</li>
+            </ul>
+        </div>
+        
+        <div class="page-content">
+            <h4>11.2. Ekspansi Global</h4>
+            <p>Jika produk Anda adalah pengetahuan, bahasa tidak lagi menjadi batasan.</p>
+            <ul>
+                <li><b>Menerjemahkan Produk:</b> Terjemahkan <i>core product</i> Anda ke Bahasa Inggris, Spanyol, atau lainnya.</li>
+                <li><b>Payment Gateway Global:</b> Pastikan sistem pembayaran Anda mendukung transaksi internasional (Stripe, PayPal).</li>
+            </ul>
+            
+            <h4>11.3. Visi Jangka Panjang</h4>
+            <p>Tujuan akhir dari <i>Digital Product Empire</i> adalah mencapai pendapatan yang stabil melalui model langganan (Subscription).</p>
+            <ul>
+                <li><b>Model Membership/Langganan:</b> Jual akses bulanan ke komunitas eksklusif, konten baru mingguan, atau <i>software</i> Anda. Ini adalah puncak dari pendapatan pasif karena memberikan aliran pendapatan yang stabil dan dapat diprediksi.</li>
+            </ul>
+            
+            <div class="tip">
+                <b>💡 Tips Praktis Bab 11</b>
+                <ul>
+                    <li><b>Alokasikan Waktu Inovasi:</b> Alokasikan 10% waktu kerja mingguan Anda (misalnya: 4 jam) hanya untuk belajar tren baru, menguji <i>tool</i> baru, atau meriset ide produk masa depan.</li>
+                </ul>
+            </div>
+            
+            <p><b>Ringkasan Bagian 6:</b> Skalabilitas adalah tentang analisis data (LTV > CAC), inovasi konstan, dan berani mendelegasikan tugas-tugas operasional agar Anda bisa fokus pada visi besar <i>empire</i> Anda.</p>
+        </div>
+
+        <div class="page-content">
+            <h2>Penutup</h2>
+            <h3>Ringkasan Final (The Big Takeaway)</h3>
+            <p>Selamat! Anda telah menyelesaikan peta jalan "Digital Product Empire."</p>
+            <p>Ingat, membangun kerajaan bukan tentang kerja keras yang tidak terarah, tetapi tentang <b>Mindset, Sistem, dan Skala.</b></p>
+            <ul>
+                <li><b>Mindset:</b> Ubah diri Anda dari <i>doer</i> (penjual waktu) menjadi <i>owner</i> (pemilik aset).</li>
+                <li><b>Sistem:</b> Bangun <i>funnel</i> dan otomatisasi yang memungkinkan produk Anda bekerja 24/7.</li>
+                <li><b>Skala:</b> Diversifikasi produk Anda (Tangga Produk) dan gunakan data (LTV, CR) untuk mengambil keputusan yang cerdas.</li>
+            </ul>
+            <p>Kekuatan produk digital adalah ia membebaskan Anda. Jangan tunggu sampai Anda punya modal besar atau <i>skill</i> sempurna. Mulailah dengan apa yang Anda miliki hari ini, segera buat MVP, dan luncurkan.</p>
+            
+            <div class="quote">
+                <p>“Anda tidak membangun bisnis. Anda membangun orang, dan orang membangun bisnis.”</p>
+                – Zig Ziglar
+            </div>
+        </div>
+
+        <div class="page-content">
+            <h3>Ajakan Bertindak (Call to Action - CTA)</h3>
+            
+            <h4>Segera Buat MVP Anda!</h4>
+            <p>Tutup Ebook ini, buka laptop Anda, dan tentukan ide produk minimal Anda. Ingat: <i>Selesai lebih baik daripada sempurna.</i> Produk pertama Anda hanyalah pintu gerbang, bukan katedral.</p>
+            
+            <h4>Mari Terhubung dan Bangun Komunitas!</h4>
+            <p>Saya tahu membangun <i>empire</i> itu butuh dukungan. Mari kita diskusikan <i>insight</i> Anda. Saya ingin melihat apa yang Anda bangun!</p>
+            <ul>
+                <li><b>Follow & Share:</b> Temukan saya di media sosial (Instagram/LinkedIn) di @DestraMandalaKeySaputra atau @DessbCorpID. Bagikan <i>insight</i> favorit Anda dari Ebook ini dengan <i>hashtag</i> #DigitalProductEmpire.</li>
+            </ul>
+            
+            <h4>Dapatkan Template Funnel Gratis!</h4>
+            <p>Ingin tahu persis bagaimana cara menyusun urutan email dan <i>landing page</i> otomatis? Unduh sekarang: <b>Template Funnel Penjualan 7 Hari</b> secara GRATIS dan langsung terapkan ke produk digital pertama Anda.</p>
+            <p style="text-align: center; font-weight: bold; margin-top: 2rem;">[Sertakan link/QR Code ke landing page Anda di sini]</p>
+            
+            <h3 style="text-align: center; margin-top: 3rem;">Bangun Empire Anda Sekarang!</h3>
+        </div>
+
+        <div class="page-content">
+        <h2>Digital Product Empire</h2>
+        <p>By Destra Mandala Key Saputra</p>
+        <p>idea from Destra</p>
+        <p>write by ChatGPT</p>
+        <p>eBook Design by Yoga</p>
+        <p>©2025 DESSB Studio</p>
+            </div>
+
+    </div>
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // Ambil semua halaman konten dari 'content-store'
+            const allContentPages = Array.from(document.querySelectorAll('#content-store .page-content'));
+            
+            // Ambil elemen buku yang terlihat
+            const leftPage = document.querySelector('.page.left');
+            const rightPage = document.querySelector('.page.right');
+            const leftPageContent = leftPage.querySelector('.content-area');
+            const rightPageContent = rightPage.querySelector('.content-area');
+            const leftPageNum = leftPage.querySelector('.page-number');
+            const rightPageNum = rightPage.querySelector('.page-number');
+            
+            // Ambil tombol navigasi
+            const prevBtn = document.getElementById('prev-page');
+            const nextBtn = document.getElementById('next-page');
+
+            let currentPageIndex = 0; // Ini adalah indeks untuk halaman KIRI
+
+            const isMobile = () => window.innerWidth <= 900;
+
+            function updateBookView() {
+                const mobileView = isMobile();
+                
+                if (mobileView) {
+                    // --- TAMPILAN MOBILE (1 Halaman) ---
+                    
+                    // Sembunyikan halaman kanan
+                    rightPage.style.display = 'none';
+                    
+                    // Muat konten ke halaman kiri
+                    const content = allContentPages[currentPageIndex];
+                    if (content) {
+                        leftPageContent.innerHTML = content.innerHTML;
+                        leftPage.className = `page left ${content.dataset.pageType || ''}`;
+                        leftPageNum.textContent = (content.classList.contains('blank-page') || content.classList.contains('cover-page')) ? '' : `Halaman ${currentPageIndex}`;
+                    } else {
+                        leftPageContent.innerHTML = '';
+                        leftPageNum.textContent = '';
+                    }
+                    
+                    // Atur status tombol
+                    prevBtn.disabled = (currentPageIndex === 0);
+                    nextBtn.disabled = (currentPageIndex >= allContentPages.length - 1);
+
+                } else {
+                    // --- TAMPILAN DESKTOP (2 Halaman) ---
+                    
+                    // Tampilkan kembali halaman kanan
+                    rightPage.style.display = 'block';
+
+                    // Muat konten halaman KIRI (indeks saat ini)
+                    const leftContent = allContentPages[currentPageIndex];
+                    if (leftContent) {
+                        leftPageContent.innerHTML = leftContent.innerHTML;
+                        leftPage.className = `page left ${leftContent.dataset.pageType || ''}`;
+                        // Jangan tampilkan nomor di halaman sampul/kosong
+                        leftPageNum.textContent = (leftContent.classList.contains('blank-page') || leftContent.classList.contains('cover-page')) ? '' : `Halaman ${currentPageIndex}`;
+                    } else {
+                        leftPageContent.innerHTML = '';
+                        leftPageNum.textContent = '';
+                    }
+
+                    // Muat konten halaman KANAN (indeks + 1)
+                    const rightContent = allContentPages[currentPageIndex + 1];
+                    if (rightContent) {
+                        rightPageContent.innerHTML = rightContent.innerHTML;
+                        rightPage.className = `page right ${rightContent.dataset.pageType || ''}`;
+                        rightPageNum.textContent = (rightContent.classList.contains('blank-page') || rightContent.classList.contains('cover-page')) ? '' : `Halaman ${currentPageIndex + 1}`;
+                    } else {
+                        rightPageContent.innerHTML = '';
+                        rightPageNum.textContent = '';
+                    }
+
+                    // Atur status tombol
+                    prevBtn.disabled = (currentPageIndex === 0);
+                    nextBtn.disabled = (currentPageIndex + 2 >= allContentPages.length);
+                }
+            }
+
+            // --- Event Listeners ---
+
+            prevBtn.addEventListener('click', () => {
+                const step = isMobile() ? 1 : 2;
+                if (currentPageIndex - step >= 0) {
+                    currentPageIndex -= step;
+                    updateBookView();
+                    // Scroll ke atas halaman saat membalik
+                    leftPage.scrollTop = 0;
+                    rightPage.scrollTop = 0;
+                }
+            });
+
+            nextBtn.addEventListener('click', () => {
+                const step = isMobile() ? 1 : 2;
+                if (currentPageIndex + step < allContentPages.length) {
+                    currentPageIndex += step;
+                    updateBookView();
+                    // Scroll ke atas halaman saat membalik
+                    leftPage.scrollTop = 0;
+                    rightPage.scrollTop = 0;
+                }
+            });
+
+            // Update tampilan jika ukuran window berubah (misal: rotasi HP)
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                clearTimeout(resizeTimer);
+                resizeTimer = setTimeout(updateBookView, 100);
+            });
+
+            // Tampilkan halaman pertama saat dimuat
+            // Kita mulai dari halaman sampul (kanan), jadi halaman kiri (indeks 0) harusnya kosong
+            // Mari kita atur ulang: Indeks 0 adalah sampul, Indeks 1 adalah halaman kosong di kiri
+            // Agar sampul muncul di kanan, kita mulai dari indeks 0, tapi halaman kiri kita ganti jadi halaman 1
+            
+            // Logika baru: Indeks 0 = Sampul Kanan.
+            // Saat di desktop, halaman kiri (indeks -1) tidak ada, jadi kita buat aturan khusus.
+            
+            // Logika Sederhana:
+            // Desktop: Tampilkan 0 (kiri) dan 1 (kanan). 
+            // Mobile: Tampilkan 0 (saja).
+            
+            // Masalah: Sampul harus di kanan. 
+            // Mari kita balik logikanya. Halaman 0 adalah KIRI, Halaman 1 adalah KANAN.
+            // Kita akan mulai dari currentPageIndex = 0.
+            
+            // Halaman 0 = Kosong (Kiri)
+            // Halaman 1 = Sampul (Kanan)
+            // Jadi kita balik urutan di content-store
+            
+            // --- Logika yang Direvisi untuk Halaman Sampul ---
+            // Kita akan tukar posisi Halaman 0 dan Halaman 1 di HTML
+            const coverPage = allContentPages[0];
+            const blankPage = allContentPages[1];
+            allContentPages[0] = blankPage;
+            allContentPages[1] = coverPage;
+            
+            // Sekarang Indeks 0 = Kiri Kosong, Indeks 1 = Kanan Sampul.
+            // Ini akan ditampilkan dengan benar di desktop.
+            // Di mobile, kita akan mulai dari Indeks 1 (Sampul).
+            if (isMobile()) {
+                currentPageIndex = 1; 
+            }
+            
+            updateBookView();
+        });
+    </script>
+
+</body>
+</html>
