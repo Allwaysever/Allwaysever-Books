@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog eBook | Allwaysever Originals</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <style>
+        /* CSS Dasar (dari index.html & penyesuaian) */
+        body {
+            background-color: #0f0f0f;
+            font-family: Arial, sans-serif;
+            color: #fff;
+            text-align: left;
+            margin: 0;
+            padding: 0 0 70px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Matikan highlight default & Efek Klik */
+        * { -webkit-tap-highlight-color: rgba(0,0,0,0.2); }
+        .buku-item-container:active, .nav-item:active, .search-button:active {
+            transform: scale(0.97);
+            opacity: 0.8;
+            transition: 0.1s;
+        }
+
+        /* Header Halaman (dengan tombol Search) */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .page-header h1 {
+            font-size: 1.8em;
+            font-weight: bold;
+            margin: 0;
+        }
+        
+        .search-button {
+            /* Sesuai permintaan visual, lingkaran transparan dengan ikon putih */
+            width: 30px; 
+            height: 30px;
+            border-radius: 50%;
+            background-color: transparent; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            color: #fff;
+            font-size: 1.2em;
+        }
+        
+        /* Kategori Konten */
+        .kategori-ebook h2 {
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        /* List Horizontal */
+        .ebook-list {
+            display: flex;
+            gap: 15px;
+            overflow-x: scroll;
+            padding-bottom: 10px;
+        }
+        .ebook-list::-webkit-scrollbar { display: none; }
+
+        /* Item Buku (Cover Card) */
+        .buku-item-container {
+            position: relative;
+            min-width: 150px; 
+            max-width: 150px;
+            text-decoration: none;
+            color: inherit;
+            flex-shrink: 0;
+            cursor: pointer; 
+        }
+
+        .buku-cover {
+            height: 225px; 
+            background-color: #444; 
+            border-radius: 10px; 
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+         .buku-title {
+            font-size: 0.9em;
+            margin top: 0.5px;
+            font-align: center;
+            font-weight: bold;
+         }
+  
+          .buku-info {
+            font-size: 0.7em;
+            margin top: 0.5px;
+            font-align: center;
+         }
+
+        /* Konten Halaman (Logic SPA) */
+        #content-area {
+            display: grid; 
+            gap: 30px;
+        }
+        
+        /* Gaya untuk pesan katalog kosong */
+        .empty-state {
+            text-align: center;
+            padding: 50px 20px;
+            background-color: #1a1a1a;
+            border-radius: 25px;
+            margin-top: 30px;
+        }
+        .empty-state h3 {
+            font-size: 1.5em;
+            color: #ffce00;
+            margin-bottom: 10px;
+        }
+        .empty-state p {
+            font-size: 1em;
+            color: #ccc;
+        }
+        
+        /* NAVIGASI BAWAH TETAP */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #1a1a1a; 
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .nav-item {
+            text-align: center;
+            text-decoration: none;
+            color: #777; 
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+        
+        .nav-item.active {
+            color: #ffce00; 
+            font-weight: bold;
+        }
+
+        .nav-icon {
+            font-size: 1.2em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        
+        <div class="page-header">
+            <h1 id="page-title">Gratis</h1> 
+            <div class="search-button">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </div>
+        </div>
+
+        <div id="content-area">
+            </div>
+
+    </div>
+    
+    <nav class="bottom-nav">
+        <div class="nav-item active" data-target="gratis">
+            <div class="nav-icon"><i class="fa-solid fa-book-open"></i></div>
+            <span>Gratis</span>
+        </div>
+        
+        <div class="nav-item" data-target="berbayar">
+            <div class="nav-icon"><i class="fa-solid fa-coins"></i></div>
+            <span>Berbayar</span>
+        </div>
+        
+        <div class="nav-item" data-target="prerelease">
+            <div class="nav-icon"><i class="fa-solid fa-hourglass-start"></i></div>
+            <span>Pre-release</span>
+        </div>
+    </nav>
+    
+    <script>
+        // Pembungkus IIFE: Melindungi kode dari Global Scope. Ini adalah praktik expert.
+        (() => { 
+            // =================================================================
+            // 1. DATA (State)
+            // =================================================================
+            const CATALOG_DATA = {
+                'gratis': [],
+                'berbayar': [
+                    { title: 'Digital Product Empire', info: 'Bisnis Digital - Rp 5.000', cover: 'https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/refs/heads/main/Assets/Images/Covers/DPE.png?token=GHSAT0AAAAAADMAY35ZXQVD6Q4KKZPO6XQW2HY6IKA', link: 'detail/DPE.html' },
+                ],
+                'prerelease': [] // Dikosongkan untuk menguji Empty State
+            };
+
+            const TITLE_MAP = {
+                'gratis': 'Gratis',
+                'berbayar': 'Berbayar',
+                'prerelease': 'Pre-release'
+            };
+
+            const EMPTY_STATE_DATA = {
+                'gratis': { title: 'Belum Ada yang Gratis', subtitle: 'Tim kami sedang menyiapkan eBook gratis yang bisa Anda nikmati!' },
+                'berbayar': { title: 'eBook Premium Sedang Dipersiapkan', subtitle: 'Pantau terus untuk koleksi buku-buku terbaik dari Allwaysever!' },
+                'prerelease': { title: 'Semua Sudah Rilis!', subtitle: 'Saat ini tidak ada eBook dalam tahap Pre-release. Cek kategori Berbayar.' }
+            };
+
+            // =================================================================
+            // 2. CACHED DOM ELEMENTS
+            // =================================================================
+            const navItems = document.querySelectorAll('.nav-item');
+            const contentArea = document.getElementById('content-area');
+            const pageTitle = document.getElementById('page-title');
+            const searchButton = document.querySelector('.search-button');
+
+            // =================================================================
+            // 3. HELPER FUNCTIONS (Modularity)
+            // =================================================================
+
+            /**
+             * Membuat markup HTML untuk kartu buku tunggal.
+             * Menggunakan Template Literal untuk kejelasan.
+             * @param {Object} book - Data buku {title, info, cover, link}
+             * @returns {string} Markup HTML
+             */
+            const createBookCard = (book) => `
+                <a href="${book.link}" class="buku-item-container">
+                    <div class="buku-cover">
+                        <img src="${book.cover}" height="100%" width="100%" alt="Cover ${book.title}">
+                    </div>
+                    <span class="buku-title">${book.title}</span>
+                    <span class="buku-info">${book.info}</span>
+                </a>
+            `;
+
+            /**
+             * Membuat markup HTML untuk tampilan kosong (Empty State).
+             * @param {string} category - Kategori yang kosong
+             * @returns {string} Markup HTML
+             */
+            const createEmptyState = (category) => {
+                const empty = EMPTY_STATE_DATA[category];
+                return `
+                    <div class="empty-state">
+                        <h3>${empty.title}</h3>
+                        <p>${empty.subtitle}</p>
+                    </div>
+                `;
+            };
+
+            // =================================================================
+            // 4. MAIN RENDER FUNCTION (Declarative)
+            // =================================================================
+
+            /**
+             * Fungsi utama untuk merender konten katalog.
+             * @param {string} category - Kategori yang akan di-render ('gratis', 'berbayar', 'prerelease')
+             */
+            const renderContent = (category) => {
+                const data = CATALOG_DATA[category] || [];
+                
+                // Update Judul Halaman
+                pageTitle.textContent = TITLE_MAP[category];
+
+                // Jika data kosong, tampilkan Empty State
+                if (data.length === 0) {
+                    contentArea.innerHTML = createEmptyState(category);
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                    return;
+                }
+
+                // Render Katalog: menggunakan .map() dan .join('') untuk performa render list
+                const bookCardsMarkup = data.map(createBookCard).join('');
+
+                const contentMarkup = `
+                    <section class="kategori-ebook">
+                        <h2>eBook ${TITLE_MAP[category]} Pilihan</h2> 
+                        <div class="ebook-list">
+                            ${bookCardsMarkup}
+                        </div>
+                    </section>
+                `;
+
+                // Render ke DOM
+                contentArea.innerHTML = contentMarkup;
+
+                // Gulir ke atas (UX improvement)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            // =================================================================
+            // 5. EVENT LISTENERS & INITIALIZATION
+            // =================================================================
+
+            // Event Listener untuk Navigasi Bawah
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    const targetId = item.getAttribute('data-target');
+
+                    // Update kelas active untuk navigasi
+                    navItems.forEach(n => n.classList.remove('active'));
+                    item.classList.add('active');
+
+                    // Render konten baru
+                    renderContent(targetId);
+                });
+            });
+
+            // Event Listener untuk Tombol Search
+            searchButton.addEventListener('click', () => {
+                // Dalam implementasi SPA yang sebenarnya, ini akan merender halaman pencarian.
+                alert('Fitur Pencarian akan dikembangkan di versi selanjutnya. (Halaman Search akan muncul di sini!)');
+            });
+
+            // Inisialisasi: Render halaman default saat DOM siap
+            document.addEventListener('DOMContentLoaded', () => {
+                // Ambil target default (yang aktif di nav), di sini adalah 'gratis'
+                const defaultTarget = document.querySelector('.nav-item.active').getAttribute('data-target');
+                renderContent(defaultTarget); 
+            });
+
+        })(); // Akhir dari IIFE
+    </script>
+</body>
+</html>
