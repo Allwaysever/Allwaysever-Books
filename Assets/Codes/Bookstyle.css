@@ -1,0 +1,297 @@
+/* CSS Reset Sederhana */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Latar belakang di luar buku */
+body {
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Mencegah scroll di body utama */
+}
+
+/* Kontainer untuk tata letak buku */
+.book-spread {
+    display: flex;
+    width: 90vw;
+    max-width: 1400px;
+    height: 90vh;
+    max-height: 900px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    position: relative;
+}
+
+/* Tampilan halaman (kiri dan kanan) */
+.page {
+    width: 50%;
+    height: 100%;
+    background: #fdfaf4; /* Warna kertas krem */
+    padding: 3rem;
+    box-sizing: border-box;
+    overflow-y: auto; /* Scroll di dalam halaman jika konten penuh */
+    color: #222;
+    line-height: 1.7;
+    position: relative;
+}
+
+/* Simulasi 'tulang' buku */
+.page.left {
+    border-right: 1px solid #ddd;
+    box-shadow: inset -5px 0 15px -10px rgba(0,0,0,0.3);
+}
+
+.page.right {
+    border-left: 1px solid #ddd;
+    box-shadow: inset 5px 0 15px -10px rgba(0,0,0,0.3);
+}
+
+/* Area konten di dalam halaman */
+.content-area {
+    text-align: justify; /* Tampilan rata kiri-kanan seperti novel */
+}
+
+/* Penomoran halaman */
+.page-number {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.9em;
+    color: #888;
+    font-style: italic;
+}
+
+/* --- STYLING KONTEN --- */
+
+/* Halaman sampul */
+.cover-page .content-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+.cover-page h1 {
+    font-size: 3.5em;
+    color: #111;
+    margin: 0;
+}
+.cover-page .author {
+    font-size: 1.5em;
+    color: #555;
+    margin-top: 1rem;
+    font-style: italic;
+}       
+.cover-page-image {
+        width: 100%;
+        height: auto;
+}
+
+/* Halaman kosong (untuk padding) */
+.blank-page .content-area {
+   
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Font sans-serif untuk judul agar kontras */
+    color: #000;
+    text-align: left;
+    font-weight: 700;
+}
+
+h2 { /* Judul Bagian */
+    font-size: 1.8em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h3 { /* Judul Bab */
+    font-size: 1.5em;
+    color: #333;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+h4 { /* Sub-bab */
+    font-size: 1.2em;
+    color: #444;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+/* Indentasi paragraf pertama setelah paragraf lain */
+p + p,
+ul + p,
+table + p,
+.quote + p,
+.tip + p,
+.case-study + p {
+    text-indent: 1.5em;
+}
+
+p {
+    margin: 0.5em 0;
+}
+
+ul, ol {
+    padding-left: 2em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
+
+/* Styling elemen khusus */
+.quote {
+    font-style: italic;
+    text-align: center;
+    margin: 2em 1.5em;
+    padding: 1em;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+
+.tip {
+    background-color: #fefbed;
+    border-left: 4px solid #f0e68c;
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+    font-size: 0.95em;
+    border-radius: 25px;
+}
+
+.case-study, .example {
+    background-color: #f4f4f4;
+    border-left: 4px solid #aaa;
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+    font-style: italic;
+    border-radius: 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5em 0;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+th {
+    background-color: #f0f0f0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+}
+
+/* --- NAVIGASI (REVISI) --- */
+.nav-buttons {
+    position: fixed;
+    top: 90%; /* Posisikan di tengah layar (vertikal) */
+    right: 20px; /* Jarak dari kanan */
+    transform: translateY(-50%); /* Penyesuaian agar pas di tengah */
+    
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 25px; /* Sesuai permintaan */
+    
+    display: flex;
+    flex-direction: column; /* Ubah jadi vertikal */
+    gap: 15px;
+    z-index: 100;
+    
+    /* Style show/hide (opacity, visibility) sudah dihapus */
+}
+
+.nav-buttons button {
+    font-size: .0.9em;
+    padding: 7px 11px;
+    background: #212121;
+    color: white;
+    border: none;
+    border-radius: 25px; /* Sesuai permintaan */
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    opacity :0.75;
+}
+
+.nav-buttons button:hover:not(:disabled) {
+    background: white;
+    color: black;
+    opacity:1;
+}
+
+.nav-buttons button:disabled {
+    background: #777;
+    cursor: not-allowed;
+}
+
+/* --- RESPONSIVE (Tampilan HP) --- */
+@media (max-width: 900px) {
+    body {
+        background-color: #fdfaf4; /* Latar jadi warna kertas */
+        overflow-y: auto; /* Izinkan scroll di body */
+        display: block;
+    }
+
+    .book-spread {
+        display: block; /* Halaman menumpuk */
+        width: 100%;
+        height: auto;
+        max-height: none;
+        box-shadow: none;
+    }
+
+    .page {
+        width: 100%;
+        height: auto;
+        min-height: 90vh; /* Setidaknya setinggi layar */
+        overflow-y: visible;
+        padding: 1.5rem;
+        /* Beri ruang di kanan agar tombol tidak menutupi teks */
+        padding-right: 50px; 
+        box-shadow: none;
+        border: none !important; /* Hapus semua border */
+    }
+
+    /* Di HP, kita hanya tampilkan 1 halaman sekali 'balik' */
+    /* Halaman kanan akan disembunyikan oleh JS */
+    .page.right {
+        display: none; 
+    }
+    
+    .page-number {
+        position: static;
+        text-align: center;
+        margin-top: 2rem;
+    }
+    
+    .cover-page .content-area {
+        min-height: 80vh;
+    }
+
+    .nav-buttons {
+        /* Tetap di kanan, tapi jaraknya sedikit beda */
+        right: 10px; 
+    }
+}
