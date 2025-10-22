@@ -3,10 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Product Empire</title>
-    <link rel="stylesheet" href="https://github.com/Allwaysever/Allwaysever-Books/blob/main/Assets/Codes/Bookstyle.css> 
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/refs/heads/main/Assets/Images/Allwaysever%20Books%20logo.png">
+    <title>Digital Product Empire | Allwaysever Books</title>
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/main/Assets/Images/Allwaysever%20Books%20logo.png">
 </head>
+<style>
+/* CSS Reset Sederhana */
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Georgia', 'Times New Roman', serif;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Latar belakang di luar buku */
+body {
+    background-color: #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden; /* Mencegah scroll di body utama */
+}
+
+/* Kontainer untuk tata letak buku */
+.book-spread {
+    display: flex;
+    width: 90vw;
+    max-width: 1400px;
+    height: 90vh;
+    max-height: 900px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    position: relative;
+}
+
+/* Tampilan halaman (kiri dan kanan) */
+.page {
+    width: 50%;
+    height: 100%;
+    background: #fdfaf4; /* Warna kertas krem */
+    padding: 3rem;
+    box-sizing: border-box;
+    overflow-y: auto; /* Scroll di dalam halaman jika konten penuh */
+    color: #222;
+    line-height: 1.7;
+    position: relative;
+}
+
+/* Simulasi 'tulang' buku */
+.page.left {
+    border-right: 1px solid #ddd;
+    box-shadow: inset -5px 0 15px -10px rgba(0,0,0,0.3);
+}
+
+.page.right {
+    border-left: 1px solid #ddd;
+    box-shadow: inset 5px 0 15px -10px rgba(0,0,0,0.3);
+}
+
+/* Area konten di dalam halaman */
+.content-area {
+    text-align: justify; /* Tampilan rata kiri-kanan seperti novel */
+}
+
+/* Penomoran halaman */
+.page-number {
+    position: absolute;
+    bottom: 1.5rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    font-size: 0.9em;
+    color: #888;
+    font-style: italic;
+}
+
+/* --- STYLING KONTEN --- */
+
+/* Halaman sampul */
+.cover-page .content-area {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    text-align: center;
+}
+.cover-page h1 {
+    font-size: 3.5em;
+    color: #111;
+    margin: 0;
+}
+.cover-page .author {
+    font-size: 1.5em;
+    color: #555;
+    margin-top: 1rem;
+    font-style: italic;
+}       
+.cover-page-image {
+        width: 100%;
+        height: auto;
+}
+
+/* Halaman kosong (untuk padding) */
+.blank-page .content-area {
+   
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Helvetica Neue', Arial, sans-serif; /* Font sans-serif untuk judul agar kontras */
+    color: #000;
+    text-align: left;
+    font-weight: 700;
+}
+
+h2 { /* Judul Bagian */
+    font-size: 1.8em;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    margin-top: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+h3 { /* Judul Bab */
+    font-size: 1.5em;
+    color: #333;
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+}
+
+h4 { /* Sub-bab */
+    font-size: 1.2em;
+    color: #444;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+}
+
+/* Indentasi paragraf pertama setelah paragraf lain */
+p + p,
+ul + p,
+table + p,
+.quote + p,
+.tip + p,
+.case-study + p {
+    text-indent: 1.5em;
+}
+
+p {
+    margin: 0.5em 0;
+}
+
+ul, ol {
+    padding-left: 2em;
+}
+
+li {
+    margin-bottom: 0.5em;
+}
+
+/* Styling elemen khusus */
+.quote {
+    font-style: italic;
+    text-align: center;
+    margin: 2em 1.5em;
+    padding: 1em;
+    border-top: 1px solid #eee;
+    border-bottom: 1px solid #eee;
+    color: #444;
+}
+
+.tip {
+    background-color: #fefbed;
+    border-left: 4px solid #f0e68c;
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+    font-size: 0.95em;
+    border-radius: 25px;
+}
+
+.case-study, .example {
+    background-color: #f4f4f4;
+    border-left: 4px solid #aaa;
+    padding: 1em 1.5em;
+    margin: 1.5em 0;
+    font-style: italic;
+    border-radius: 25px;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1.5em 0;
+    font-size: 0.9em;
+    text-align: left;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+}
+
+th {
+    background-color: #f0f0f0;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 600;
+}
+
+/* --- NAVIGASI (REVISI) --- */
+.nav-buttons {
+    position: fixed;
+    top: 90%; /* Posisikan di tengah layar (vertikal) */
+    right: 20px; /* Jarak dari kanan */
+    transform: translateY(-50%); /* Penyesuaian agar pas di tengah */
+    
+    background: rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    border-radius: 25px; /* Sesuai permintaan */
+    
+    display: flex;
+    flex-direction: column; /* Ubah jadi vertikal */
+    gap: 15px;
+    z-index: 100;
+    
+    /* Style show/hide (opacity, visibility) sudah dihapus */
+}
+
+.nav-buttons button {
+    font-size: .0.9em;
+    padding: 7px 11px;
+    background: #212121;
+    color: white;
+    border: none;
+    border-radius: 25px; /* Sesuai permintaan */
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-weight: bold;
+    opacity :0.75;
+}
+
+.nav-buttons button:hover:not(:disabled) {
+    background: white;
+    color: black;
+    opacity:1;
+}
+
+.nav-buttons button:disabled {
+    background: #777;
+    cursor: not-allowed;
+}
+
+/* --- RESPONSIVE (Tampilan HP) --- */
+@media (max-width: 900px) {
+    body {
+        background-color: #fdfaf4; /* Latar jadi warna kertas */
+        overflow-y: auto; /* Izinkan scroll di body */
+        display: block;
+    }
+
+    .book-spread {
+        display: block; /* Halaman menumpuk */
+        width: 100%;
+        height: auto;
+        max-height: none;
+        box-shadow: none;
+    }
+
+    .page {
+        width: 100%;
+        height: auto;
+        min-height: 90vh; /* Setidaknya setinggi layar */
+        overflow-y: visible;
+        padding: 1.5rem;
+        /* Beri ruang di kanan agar tombol tidak menutupi teks */
+        padding-right: 50px; 
+        box-shadow: none;
+        border: none !important; /* Hapus semua border */
+    }
+
+    /* Di HP, kita hanya tampilkan 1 halaman sekali 'balik' */
+    /* Halaman kanan akan disembunyikan oleh JS */
+    .page.right {
+        display: none; 
+    }
+    
+    .page-number {
+        position: static;
+        text-align: center;
+        margin-top: 2rem;
+    }
+    
+    .cover-page .content-area {
+        min-height: 80vh;
+    }
+
+    .nav-buttons {
+        /* Tetap di kanan, tapi jaraknya sedikit beda */
+        right: 10px; 
+    }
+}
+</style>
 <body>
 
     <div class="book-spread">
@@ -31,7 +329,7 @@
     <div id="content-store" style="display: none;">
 
         <div class="page-content cover-page" data-page-type="cover">
-            <img src="https://github.com/Allwaysever/Allwaysever-Books/blob/main/Assets/Images/Covers/DPE.png" class="cover-page-image">
+<img src="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/main/Assets/Images/Covers/DPE.png" class="cover-page-image">
         </div>
 
         <div class="page-content blank-page">
@@ -40,7 +338,7 @@
         <div class="page-content blank-page">
         <h4>Digital Product Empire<br>Oleh: Destra Mandala Key Saputra</h4>
         <p>Hak Cipta © 2025 pada Penulis<br>Asisten penulis: OpenAI GPT-5<br>Editor: Yoga Pradana Ismail<br>Setting: Google Gemini 2.5 Pro<br>Desain cover: Yoga Pradana Ismail<br>Korektor: Google Gemini 2.5 Pro</p><br><br><br><br><br>
-         <a href="https://allwayseverbooks.netlify.app" target="_blank"><img src="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/refs/heads/main/Assets/Images/Allwaysever%20Books%20Text%20Logo.png" width="45%" height="auto" alt="Allwaysever Books"></a>
+         <a href="https://allwayseverbooks.netlify.app" target="_blank"><img src="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/main/Assets/Images/Allwaysever%20Books%20Text%20Logo.png" width="45%" height="auto" alt="Allwaysever Books"></a>
             </div>
 
         <div class="page-content">
@@ -591,7 +889,7 @@
             <p>Tutup Ebook ini, buka laptop Anda, dan tentukan ide produk minimal Anda. Ingat: <i>Selesai lebih baik daripada sempurna.</i> Produk pertama Anda hanyalah pintu gerbang, bukan katedral.</p>
             
             <h4>Mari Terhubung dan Bangun Komunitas!</h4>
-            <p>Saya tahu membangun <i>empire</i> itu butuh dukungan. Mari kita diskusikan <i>insight</i> Anda. Saya ingin melihat apa yang Anda bangun!</p>
+            <p>Iya tahu membangun <i>empire</i> itu butuh dukungan. Mari kita diskusikan <i>insight</i> Anda. Saya ingin melihat apa yang Anda bangun!</p>
             <ul>
                 <li><b>Follow & Share:</b> Temukan saya di media sosial (Instagram/LinkedIn) di @DestraMandalaKeySaputra atau @DessbCorpID. Bagikan <i>insight</i> favorit Anda dari Ebook ini dengan <i>hashtag</i> #DigitalProductEmpire.</li>
             </ul>
@@ -609,7 +907,139 @@
 
     </div>
 
-    <script src="https://github.com/Allwaysever/Allwaysever-Books/blob/main/Assets/Codes/Booklogic.js"></script>
+    <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // Ambil semua halaman konten dari 'content-store'
+    const allContentPages = Array.from(document.querySelectorAll('#content-store .page-content'));
+    
+    // Ambil elemen buku yang terlihat
+    const leftPage = document.querySelector('.page.left');
+    const rightPage = document.querySelector('.page.right');
+    const leftPageContent = leftPage.querySelector('.content-area');
+    const rightPageContent = rightPage.querySelector('.content-area');
+    const leftPageNum = leftPage.querySelector('.page-number');
+    const rightPageNum = rightPage.querySelector('.page-number');
+    
+    // Ambil tombol navigasi
+    const prevBtn = document.getElementById('prev-page');
+    const nextBtn = document.getElementById('next-page');
+
+    let currentPageIndex = 0; // Ini adalah indeks untuk halaman KIRI
+
+    const isMobile = () => window.innerWidth <= 900;
+
+    // --- Logika yang Direvisi untuk Halaman Sampul ---
+    // Kita akan tukar posisi Halaman 0 (Sampul) dan Halaman 1 (Kosong)
+    const coverPage = allContentPages[0];
+    const blankPage = allContentPages[1];
+    allContentPages[0] = blankPage;
+    allContentPages[1] = coverPage;
+    
+    // Sekarang Indeks 0 = Kiri Kosong, Indeks 1 = Kanan Sampul.
+    // Di mobile, kita akan mulai dari Indeks 1 (Sampul) agar sampul langsung terlihat.
+    if (isMobile()) {
+        currentPageIndex = 1; 
+    }
+
+    function updateBookView() {
+        const mobileView = isMobile();
+        
+        if (mobileView) {
+            // --- TAMPILAN MOBILE (1 Halaman) ---
+            
+            // Sembunyikan halaman kanan
+            rightPage.style.display = 'none';
+            
+            // Muat konten ke halaman kiri
+            const content = allContentPages[currentPageIndex];
+            if (content) {
+                leftPageContent.innerHTML = content.innerHTML;
+                leftPage.className = `page left ${content.dataset.pageType || ''}`;
+                // Hitung nomor halaman yang ditampilkan
+                const pageNum = (content.classList.contains('blank-page') || content.classList.contains('cover-page')) ? '' : `${currentPageIndex - 1}`; // -1 karena 0 & 1 adalah sampul
+                leftPageNum.textContent = pageNum;
+            } else {
+                leftPageContent.innerHTML = '';
+                leftPageNum.textContent = '';
+            }
+            
+            // Atur status tombol
+            prevBtn.disabled = (currentPageIndex === 1); // Indeks 1 adalah halaman sampul (awal)
+            nextBtn.disabled = (currentPageIndex >= allContentPages.length - 1);
+
+        } else {
+            // --- TAMPILAN DESKTOP (2 Halaman) ---
+            
+            // Tampilkan kembali halaman kanan
+            rightPage.style.display = 'block';
+
+            // Muat konten halaman KIRI (indeks saat ini)
+            const leftContent = allContentPages[currentPageIndex];
+            if (leftContent) {
+                leftPageContent.innerHTML = leftContent.innerHTML;
+                leftPage.className = `page left ${leftContent.dataset.pageType || ''}`;
+                // Hitung nomor halaman KIRI
+                const leftNum = (leftContent.classList.contains('blank-page') || leftContent.classList.contains('cover-page')) ? '' : `${currentPageIndex - 1}`;
+                leftPageNum.textContent = leftNum;
+            } else {
+                leftPageContent.innerHTML = '';
+                leftPageNum.textContent = '';
+            }
+
+            // Muat konten halaman KANAN (indeks + 1)
+            const rightContent = allContentPages[currentPageIndex + 1];
+            if (rightContent) {
+                rightPageContent.innerHTML = rightContent.innerHTML;
+                rightPage.className = `page right ${rightContent.dataset.pageType || ''}`;
+                // Hitung nomor halaman KANAN
+                const rightNum = (rightContent.classList.contains('blank-page') || rightContent.classList.contains('cover-page')) ? '' : `${currentPageIndex + 1 - 1}`;
+                rightPageNum.textContent = rightNum;
+            } else {
+                rightPageContent.innerHTML = '';
+                rightPageNum.textContent = '';
+            }
+
+            // Atur status tombol
+            prevBtn.disabled = (currentPageIndex === 0);
+            nextBtn.disabled = (currentPageIndex + 2 >= allContentPages.length);
+        }
+    }
+
+    // --- Event Listeners ---
+
+    prevBtn.addEventListener('click', () => {
+        const step = isMobile() ? 1 : 2;
+        if (currentPageIndex - step >= 0) {
+            currentPageIndex -= step;
+            updateBookView();
+            // Scroll ke atas halaman saat membalik
+            leftPage.scrollTop = 0;
+            rightPage.scrollTop = 0;
+        }
+    });
+
+    nextBtn.addEventListener('click', () => {
+        const step = isMobile() ? 1 : 2;
+        if (currentPageIndex + step < allContentPages.length) {
+            currentPageIndex += step;
+            updateBookView();
+            // Scroll ke atas halaman saat membalik
+            leftPage.scrollTop = 0;
+            rightPage.scrollTop = 0;
+        }
+    });
+
+    // Update tampilan jika ukuran window berubah (misal: rotasi HP)
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(updateBookView, 100);
+    });
+
+    // Tampilkan halaman pertama saat dimuat
+    updateBookView();
+});
+</script>
 
 </body>
 </html>
