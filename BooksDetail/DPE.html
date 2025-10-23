@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detail Buku: The Development Path</title>
+    <title>Detail Buku: Digital Product Empire</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/main/Assets/Images/Allwaysever%20Books%20logo.png">
 <style>
@@ -157,18 +157,18 @@ body {
                 <div class="text-info">
                     <h1>Digital Product Empire</h1>
                     <p>Oleh: Destra Mandala Key Saputra</p>
-                    <p><i class="fa-solid fa-dollar-sign"></i> Harga: <span class="tag price-tag">Rp 5.000</span></p>
+                    <p><i class="fa-solid fa-dollar-sign"></i> Harga: <span class="tag price-tag" id="product-price"></span></p>
                     <p><i class="fa-solid fa-layer-group"></i> Kategori: Bisnis</p>
                     <p>Halaman: 37 | Format: HTML</p>
                 </div>
             </div>
 
-            <a href="Checkout_DPE.html" class="action-button premium">
+            <a href="checkout.html?code=DPEbyDESSB" class="action-button premium">
                 <i class="fa-solid fa-shopping-cart"></i> Beli Sekarang
             </a>
             
             <p class="purchase-info">
-                Pembelian via QRIS. File eBook akan dikirimkan ke Email Anda setelah pembayaran berhasil diverifikasi.
+                Pembelian via Saweria. File eBook akan dikirimkan ke Email Anda setelah pembayaran berhasil diverifikasi.
             </p>
 
             <div class="sinopsis">
@@ -177,5 +177,28 @@ body {
             </div>
         </div>
     </div>
-</body>
+    
+    <script>
+        // Database Harga Produk (SAMA dengan yang ada di checkout.html)
+        const productDB = {
+            'DPEbyDESSB': { name: 'Digital Product Empire', basePrice: 5000 },
+            'DEVPATH01': { name: 'The Development Path', basePrice: 80000 },
+            'ADVJS02': { name: 'Advanced JS Patterns', basePrice: 120000 },
+        };
+
+        const CURRENT_PRODUCT_CODE = 'DPEbyDESSB'; // Kode Produk untuk halaman ini
+        
+        window.onload = function() {
+            const product = productDB[CURRENT_PRODUCT_CODE];
+            const priceElement = document.getElementById('product-price');
+
+            if (product && priceElement) {
+                const formattedPrice = 'Rp ' + product.basePrice.toLocaleString('id-ID');
+                priceElement.textContent = formattedPrice;
+            } else if (priceElement) {
+                priceElement.textContent = 'Harga tidak tersedia';
+            }
+        };
+    </script>
+    </body>
 </html>
