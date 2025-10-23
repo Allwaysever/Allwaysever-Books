@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Checkout | The Development Path</title>
+    <title>Pembayaran | The Development Path</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" integrity="sha512-..." crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
 /* DETAIL.CSS - CSS Detail Buku dan Checkout (Expert Refactoring) */
@@ -82,33 +82,6 @@ body {
     text-shadow: 0 0 5px rgba(255, 206, 0, 0.3);
 }
 
-/* --- Input Field (Nama and Email) --- */
-.form-group {
-    margin-bottom: var(--spacing-default);
-}
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-    font-size: 1.05rem;
-}
-.form-group input[type="email"],
-.form-group input[type="text"] {
-    width: 100%;
-    padding: 0.8rem 1rem; /* Padding proporsional */
-    border: none;
-    border-radius: var(--border-radius-element); 
-    background-color: var(--color-input-bg); 
-    color: var(--color-dark-bg); 
-    box-sizing: border-box;
-    font-size: 1rem;
-    font-weight: 500;
-    /* Inner shadow untuk efek kedalaman input */
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.15); 
-    /* Memastikan text input tidak terpotong */
-    line-height: normal; 
-}
-
 /* --- Rincian Harga Baru --- */
 .price-details {
     padding: 0 0 1rem 0; /* Padding bawah */
@@ -144,25 +117,6 @@ body {
 .payment-summary.total-row .price-tag {
     color: var(--color-accent-yellow); /* Highlight Total */
     font-size: 1.25rem;
-}
-
-/* --- Tombol Proses Pembayaran --- */
-.action-button.process {
-    background-color: var(--color-action-green); 
-    color: var(--color-text-light);
-    width: 100%;
-    margin-top: 2rem;
-    border: none; 
-    padding: 1rem;
-    border-radius: var(--border-radius-element);
-    font-weight: bold;
-    font-size: 1.1rem;
-    box-shadow: 0 4px 15px rgba(40, 167, 69, 0.6); 
-    transition: transform 0.1s, box-shadow 0.1s;
-}
-.action-button.process:active {
-    transform: scale(0.97);
-    box-shadow: 0 2px 8px rgba(40, 167, 69, 0.8);
 }
 
 /* --- Tombol Link Pembayaran QRIS (Warna Biru) --- */
@@ -210,49 +164,34 @@ body {
 <body>
     <div class="container">
         <div class="detail-header">
-            <a href="tentang_berbayar_01.html" class="back-button"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+            <a href="javascript:history.back()" class="back-button"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
         </div>
 
 <div class="checkout-card">
-    <h2>Lengkapi Data Pembelian</h2>
-    <form id="payment-form">
-        <div class="form-group">
-            <label for="name">Nama Lengkap</label>
-            <input type="text" id="name" name="name" placeholder="Masukkan nama Anda" required>
+    <h2>Ringkasan Pembayaran</h2>
+
+    <div class="price-details">
+        <div class="price-item">
+            <span class="label">Harga Produk</span>
+            <span class="value" id="base-price">Rp 0</span>
         </div>
-        <div class="form-group">
-            <label for="email">Email Pengiriman</label>
-            <input type="email" id="email" name="email" placeholder="contoh@mail.com" required>
+        <div class="price-item admin-fee-row">
+            <span class="label">Biaya Admin</span>
+            <span class="value" id="admin-fee">Rp 0</span>
         </div>
+    </div>
 
-        <div class="price-details">
-            <div class="price-item">
-                <span class="label">Harga Produk</span>
-                <span class="value" id="base-price">Rp 0</span>
-            </div>
-            <div class="price-item admin-fee-row">
-                <span class="label">Biaya Admin</span>
-                <span class="value" id="admin-fee">Rp 0</span>
-            </div>
-        </div>
+    <div class="payment-summary total-row">
+        <span>Total Pembayaran</span>
+        <span class="price-tag" id="total-price">Rp 0</span>
+    </div>
+    <h3 style="color: var(--color-accent-yellow); text-align: center; margin-top: 2rem; margin-bottom: 1rem;">Pilih Metode Pembayaran</h3>
 
-        <div class="payment-summary total-row">
-            <span>Total Pembayaran</span>
-            <span class="price-tag" id="total-price">Rp 0</span>
-        </div>
-
-        <button type="submit" class="action-button process" id="process-payment-button">
-            <i class="fa-solid fa-credit-card"></i> Proses Pembayaran
-        </button>
-    </form>
-    
-    <p class="note" id="initial-note">
-        Anda akan diarahkan ke halaman pembayaran via Saweria. Setelah pembayaran berhasil, eBook akan diproses dan dikirim via email.
-    </p>
-
-    <div id="qris-section" style="display: none; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #333;">
-
-        <h3 style="color: var(--color-accent-yellow); text-align: center; margin-bottom: 1.5rem;">Langkah 2: Pindai & Selesaikan Pembayaran</h3>
+    <div id="qris-section" style="padding-top: 1rem;">
+        
+        <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+            Gunakan tautan atau pindai QR Code di bawah (Total Otomatis: <span id="total-text-qris">Rp 0</span>)
+        </p>
 
         <div style="text-align: center; margin-bottom: 1.5rem;">
             <img id="qris-iframe" src="https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/refs/heads/main/Assets/Images/QRCode.jpg"
@@ -260,55 +199,48 @@ body {
                     title="QRIS Pembayaran eBook">
             </img>
         </div>
-        
-        <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
-            Pindai QR Code di atas. Atau gunakan tautan di bawah jika tidak bisa memindai (Mobile)
-        </p>
 
         <a href="https://saweria.co/AllwayseverBooks" 
            target="_blank" 
-           class="action-button qris-link">
-            <i class="fa-solid fa-up-right-from-square"></i> Buka Halaman Pembayaran (Tautan Langsung)
+           class="action-button qris-link"
+           style="background-color: var(--color-action-green); box-shadow: 0 4px 15px rgba(40, 167, 69, 0.6);">
+            <i class="fa-solid fa-up-right-from-square"></i> Bayar Sekarang via QRIS/Saweria
         </a>
 
         <a href="LINK_GOOGLE_FORM_ANDA_DI_SINI" 
            target="_blank" 
            class="action-button confirmation"
            style="margin-top: 1rem;">
-            <i class="fa-solid fa-receipt"></i> Wajib: Isi Form Konfirmasi Pembayaran
+            <i class="fa-solid fa-receipt"></i> <b>WAJIB:</b> Isi Form Konfirmasi & Data Kirim
         </a>
         
-        <p class="note" style="margin-top: 1.5rem;" id="final-note">
-            <b>Penting:</b> <b>Jika Anda menggunakan Tombol Konfirmasi,</b> proses pengiriman eBook akan lebih cepat. Konfirmasi pembayaran otomatis hanya berlaku untuk beberapa jenis pembayaran.
+        <p class="note" style="margin-top: 1.5rem;">
+            Pembayaran akan dicek setelah pengisian form konfirmasi. Harap simpan bukti transfer Anda.
         </p>
     </div>
     </div>
 
 <script>
-    // 1. Database Harga Produk dan Biaya Admin
-    const productDB = {
-        // Format: 'KODE_PRODUK': { name: 'Nama Produk', basePrice: HARGA_DASAR }
-        'DPEbyDESSB': { name: 'Digital Product Empire', basePrice: 5000 },
-        'BELUMADA': { name: 'Belum ada', basePrice: 1000000 },
-        // Tambahkan produk lain di sini
-    };
-
-function getUrlParameter(name) {
+    // FUNGSI UTILITY: Mendapatkan parameter dari URL
+    function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
         var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
         var results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
     };
 
-    // Baca kode produk dari URL, default ke 'DEVPATH01' jika tidak ada
-    const CURRENT_PRODUCT_CODE = getUrlParameter('code') || 'DEVPATH01'; 
-    const product = productDB[CURRENT_PRODUCT_CODE];
+    // 1. Database Harga Produk dan Biaya Admin (Sama dengan file detail)
+    const productDB = {
+        // Format: 'KODE_PRODUK': { name: 'Nama Produk', basePrice: HARGA_DASAR }
+        'DPEbyDESSB': { name: 'Digital Product Empire', basePrice: 5000 },
+        'DEVPATH01': { name: 'The Development Path', basePrice: 80000 },
+        'ADVJS02': { name: 'Advanced JS Patterns', basePrice: 120000 },
+    };
 
-    const ADMIN_FEE = 3000; // Biaya Admin tetap (misal: Rp 3.000)
+    const ADMIN_FEE = 1000; // Biaya Admin tetap (Rp 3.000)
     
-    // Asumsi: Kode Produk ditarik dari URL atau variabel lain.
-    // Untuk contoh ini, kita hardcode menggunakan 'DEVPATH01'
-    const CURRENT_PRODUCT_CODE = 'DEVPATH01'; 
+    // Ambil kode produk dari URL yang dilempar oleh halaman detail (e.g., checkout.html?code=DEVPATH01)
+    const CURRENT_PRODUCT_CODE = getUrlParameter('code') || 'DEVPATH01'; // Default ke DEVPATH01
     const product = productDB[CURRENT_PRODUCT_CODE];
     
     let basePrice = 0;
@@ -318,84 +250,43 @@ function getUrlParameter(name) {
         basePrice = product.basePrice;
         totalPrice = basePrice + ADMIN_FEE;
     } else {
-        console.error("Kode Produk tidak ditemukan.");
+        console.error("Kode Produk tidak ditemukan. Menggunakan harga 0.");
     }
 
     // Fungsi untuk memperbarui tampilan harga di HTML
     function updatePriceDisplay() {
-        if (!product) return;
+        if (!product) {
+            // Jika produk tidak ditemukan, tampilkan pesan error
+            document.querySelector('.checkout-card h2').textContent = 'Produk Tidak Ditemukan!';
+            document.getElementById('base-price').textContent = '-';
+            document.getElementById('admin-fee').textContent = '-';
+            document.getElementById('total-price').textContent = '-';
+            document.getElementById('total-text-qris').textContent = '0';
+            return;
+        }
+
+        const formattedBasePrice = 'Rp ' + basePrice.toLocaleString('id-ID');
+        const formattedAdminFee = 'Rp ' + ADMIN_FEE.toLocaleString('id-ID');
+        const formattedTotalPrice = 'Rp ' + totalPrice.toLocaleString('id-ID');
 
         // Tampilkan Harga Dasar
-        const basePriceSpan = document.getElementById('base-price');
-        if (basePriceSpan) {
-            basePriceSpan.textContent = 'Rp ' + basePrice.toLocaleString('id-ID');
-        }
+        document.getElementById('base-price').textContent = formattedBasePrice;
 
         // Tampilkan Biaya Admin
-        const adminFeeSpan = document.getElementById('admin-fee');
-        if (adminFeeSpan) {
-            adminFeeSpan.textContent = 'Rp ' + ADMIN_FEE.toLocaleString('id-ID');
-        }
+        document.getElementById('admin-fee').textContent = formattedAdminFee;
 
         // Tampilkan Total Pembayaran
-        const totalPriceSpan = document.getElementById('total-price');
-        if (totalPriceSpan) {
-            totalPriceSpan.textContent = 'Rp ' + totalPrice.toLocaleString('id-ID');
-        }
+        document.getElementById('total-price').textContent = formattedTotalPrice;
+        
+        // Tampilkan Total Pembayaran di dalam teks deskripsi
+        document.getElementById('total-text-qris').textContent = formattedTotalPrice;
+        
+        // Update Judul
+        document.querySelector('.checkout-card h2').textContent = 'Ringkasan Pembayaran: ' + product.name;
     }
 
     // Panggil fungsi update segera setelah script dimuat
     updatePriceDisplay();
-
-    // Logika Form Submission (Sama seperti sebelumnya)
-    document.getElementById('payment-form').addEventListener('submit', function(e) {
-        e.preventDefault(); 
-
-        const nameInput = document.getElementById('name');
-        const emailInput = document.getElementById('email');
-        
-        // 1. Validasi Input
-        if (!nameInput.checkValidity() || !emailInput.checkValidity()) {
-            alert('Mohon lengkapi Nama dan Email dengan benar sebelum melanjutkan.');
-            return;
-        }
-
-        // 2. Dapatkan elemen yang akan diubah
-        const processButton = document.getElementById('process-payment-button');
-        const qrisSection = document.getElementById('qris-section');
-        const initialNote = document.getElementById('initial-note');
-        const priceDetails = document.querySelector('.price-details');
-        const totalRow = document.querySelector('.payment-summary.total-row');
-
-        // 3. Sembunyikan Form Input & Tombol Awal (dan rincian harga)
-        nameInput.parentElement.style.display = 'none';
-        emailInput.parentElement.style.display = 'none';
-        
-        // Sembunyikan rincian harga dari form awal
-        priceDetails.style.display = 'none';
-        totalRow.style.display = 'none';
-        
-        processButton.style.display = 'none';
-        initialNote.style.display = 'none';
-        
-        // 4. Ubah Judul
-        document.querySelector('.checkout-card h2').textContent = 'Selesaikan Pembayaran Saweria';
-
-        // 5. Tampilkan Bagian QRIS
-        qrisSection.style.display = 'block';
-
-        // 6. Simpan data di local storage
-        localStorage.setItem('checkoutName', nameInput.value);
-        localStorage.setItem('checkoutEmail', emailInput.value);
-    });
-
-    // Mengisi kembali form jika ada data tersimpan
-    window.onload = function() {
-        const savedName = localStorage.getItem('checkoutName');
-        const savedEmail = localStorage.getItem('checkoutEmail');
-        if (savedName) document.getElementById('name').value = savedName;
-        if (savedEmail) document.getElementById('email').value = savedEmail;
-    }
 </script>
 </body>
 </html>
