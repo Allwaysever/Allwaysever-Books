@@ -23,6 +23,14 @@
     --spacing-default: 1.25rem; /* 20px */
 }
 
+        /* Matikan highlight default & Efek Klik */
+        * { -webkit-tap-highlight-color: rgba(0,0,0,0.2); }
+        .buku-item-container:active, .nav-item:active, .search-button:active {
+            transform: scale(0.97);
+            opacity: 0.8;
+            transition: 0.1s;
+        }
+
 /* --- 2. GENERAL STYLE --- */
 body {
     background-color: var(--color-dark-bg);
