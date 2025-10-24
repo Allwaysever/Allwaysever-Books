@@ -146,7 +146,7 @@ body {
 <body>
     <div class="container">
         <div class="detail-header">
-            <a href="https://allwayseverbooks.netlify.app" class="back-button"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+            <a id="tombolKembali" class="back-button"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
         </div>
 
         <div class="detail-card">
@@ -178,5 +178,11 @@ body {
         </div>
     </div>
     
+    <script>
+const tombol = document.getElementById('tombolKembali');
+    tombol.addEventListener('click', function() {
+        window.history.back();
+    });
+    </script>
     </body>
 </html>
