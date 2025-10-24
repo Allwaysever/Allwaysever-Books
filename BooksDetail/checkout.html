@@ -164,7 +164,7 @@ body {
 <body>
     <div class="container">
         <div class="detail-header">
-            <a href="javascript:history.back()" class="back-button"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
+            <a id="tombolKembali" class="back-button"><i class="fa-solid fa-arrow-left"></i> Kembali</a>
         </div>
 
 <div class="checkout-card">
@@ -237,7 +237,7 @@ body {
         'ADVJS02': { name: 'Advanced JS Patterns', basePrice: 120000 },
     };
 
-    const ADMIN_FEE = 1000; // Biaya Admin tetap (Rp 3.000)
+    const ADMIN_FEE = 0; // biaya admin
     
     // Ambil kode produk dari URL yang dilempar oleh halaman detail (e.g., checkout.html?code=DEVPATH01)
     const CURRENT_PRODUCT_CODE = getUrlParameter('code') || 'DEVPATH01'; // Default ke DEVPATH01
@@ -287,6 +287,11 @@ body {
 
     // Panggil fungsi update segera setelah script dimuat
     updatePriceDisplay();
+
+const tombol = document.getElementById('tombolKembali');
+    tombol.addEventListener('click', function() {
+        window.history.back();
+    });
 </script>
 </body>
 </html>
