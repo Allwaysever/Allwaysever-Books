@@ -178,27 +178,5 @@ body {
         </div>
     </div>
     
-    <script>
-        // Database Harga Produk (SAMA dengan yang ada di checkout.html)
-        const productDB = {
-            'DPEbyDESSB': { name: 'Digital Product Empire', basePrice: 5000 },
-            'DEVPATH01': { name: 'The Development Path', basePrice: 80000 },
-            'ADVJS02': { name: 'Advanced JS Patterns', basePrice: 120000 },
-        };
-
-        const CURRENT_PRODUCT_CODE = 'DPEbyDESSB'; // Kode Produk untuk halaman ini
-        
-        window.onload = function() {
-            const product = productDB[CURRENT_PRODUCT_CODE];
-            const priceElement = document.getElementById('product-price');
-
-            if (product && priceElement) {
-                const formattedPrice = 'Rp ' + product.basePrice.toLocaleString('id-ID');
-                priceElement.textContent = formattedPrice;
-            } else if (priceElement) {
-                priceElement.textContent = 'Harga tidak tersedia';
-            }
-        };
-    </script>
     </body>
 </html>
