@@ -17,6 +17,79 @@
             padding: 0 0 70px 0;
         }
 
+/* ======================================================= */
+/* MEDIA QUERY: DESKTOP OPTIMIZATION (min-width: 768px) */
+/* ======================================================= */
+@media (min-width: 768px) {
+    
+    /* Container lebih lebar di desktop, nav hilang */
+    .container {
+        max-width: 1200px; /* Lebarkan Container Utama */
+        padding-bottom: 20px; /* Hilangkan padding untuk nav yang akan disembunyikan */
+    }
+    
+    /* Bottom Nav dihilangkan (Semua konten akan ada di satu halaman dengan header/sidebar, 
+       tapi karena ini Single Page App sederhana, kita biarkan halaman statis) */
+    .bottom-nav {
+        display: none; 
+    }
+    
+    /* Padding bawah body dihilangkan karena bottom-nav hilang */
+    body {
+        padding-bottom: 20px; 
+    }
+
+    /* Header dibuat lebih besar */
+    .page-header h1 {
+        font-size: 2.5em;
+    }
+
+    /* Search Button dibuat lebih menonjol */
+    .search-button {
+        width: 40px; 
+        height: 40px;
+        font-size: 1.5em;
+        background-color: #333;
+        border-radius: 10px;
+    }
+
+    /* Area Konten: Ganti dari list horizontal ke grid */
+    .ebook-list {
+        display: grid;
+        /* Buat 5 kolom dengan lebar yang sama */
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); 
+        gap: 30px; 
+        overflow-x: hidden; /* Hilangkan scroll horizontal */
+        padding-bottom: 0;
+    }
+
+    /* Item Buku disesuaikan ukurannya untuk grid */
+    .buku-item-container {
+        min-width: auto; /* Biarkan grid menentukan lebar */
+        max-width: none;
+        transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .buku-item-container:hover {
+        transform: translateY(-5px); /* Efek melayang */
+        box-shadow: 0 10px 20px rgba(255, 206, 0, 0.2); /* Efek bayangan kuning */
+    }
+
+    .buku-cover {
+        height: 270px; /* Naikkan tinggi cover */
+        border-radius: 15px;
+    }
+    
+    /* Kategori di desktop akan ditampilkan semua */
+    #content-area {
+        display: block; 
+    }
+    
+    .kategori-ebook h2 {
+        font-size: 1.8em;
+        margin-top: 30px;
+    }
+}
+
         .container {
             max-width: 800px;
             margin: 0 auto;
@@ -207,7 +280,7 @@
             const CATALOG_DATA = {
                 'gratis': [],
                 'berbayar': [
-                    { title: 'Digital Product Empire', info: 'Bisnis Digital - Rp 5.000', cover: 'https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/refs/heads/main/Assets/Images/Covers/DPE.png', link: 'BooksDetail/DPE.html' },
+                    { title: 'Digital Product Empire', info: 'Bisnis Digital - Rp 5.000', cover: 'https://raw.githubusercontent.com/Allwaysever/Allwaysever-Books/refs/heads/main/Assets/Images/Covers/DPE.png', link: 'https://allwayseverbooks.netlify.app/booksdetail/dpe' },
                 ],
                 'prerelease': [] // Dikosongkan untuk menguji Empty State
             };
@@ -339,6 +412,107 @@
             });
 
         })(); // Akhir dari IIFE
+		
+	// ... (Kode sebelumnya)
+
+            // =================================================================
+            // 4. MAIN RENDER FUNCTION (Declarative)
+            // =================================================================
+
+            /**
+             * Fungsi utama untuk merender konten katalog.
+             * @param {string} category - Kategori yang akan di-render ('gratis', 'berbayar', 'prerelease')
+             */
+            const renderContent = (category) => {
+                const isDesktop = window.matchMedia("(min-width: 768px)").matches;
+                let finalMarkup = '';
+
+                // --- LOGIC BARU: RENDER DESKTOP (Semua Kategori) ---
+                if (isDesktop) {
+                    pageTitle.textContent = "Katalog eBook Allwaysever"; // Judul halaman utama desktop
+                    
+                    ['gratis', 'berbayar', 'prerelease'].forEach(cat => {
+                        const data = CATALOG_DATA[cat] || [];
+                        
+                        // Buat markup per kategori
+                        let categoryContent;
+                        if (data.length === 0) {
+                            categoryContent = createEmptyState(cat);
+                            // Optional: Ganti menjadi tulisan yang lebih ringkas di desktop, tapi kita pakai yang sudah ada.
+                        } else {
+                            const bookCardsMarkup = data.map(createBookCard).join('');
+                            categoryContent = `
+                                <section class="kategori-ebook">
+                                    <h2>eBook ${TITLE_MAP[cat]} Pilihan</h2> 
+                                    <div class="ebook-list">
+                                        ${bookCardsMarkup}
+                                    </div>
+                                </section>
+                            `;
+                        }
+                        finalMarkup += categoryContent;
+                    });
+                    
+                } else {
+                    // --- LOGIC LAMA: RENDER MOBILE (Per Kategori) ---
+                    const data = CATALOG_DATA[category] || [];
+                    
+                    pageTitle.textContent = TITLE_MAP[category];
+
+                    if (data.length === 0) {
+                        finalMarkup = createEmptyState(category);
+                    } else {
+                        const bookCardsMarkup = data.map(createBookCard).join('');
+                        finalMarkup = `
+                            <section class="kategori-ebook">
+                                <h2>eBook ${TITLE_MAP[category]} Pilihan</h2> 
+                                <div class="ebook-list">
+                                    ${bookCardsMarkup}
+                                </div>
+                            </section>
+                        `;
+                    }
+                }
+
+                // Render ke DOM
+                contentArea.innerHTML = finalMarkup;
+
+                // Gulir ke atas (UX improvement)
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                
+                // Tambahan: Update tampilan navigasi di mobile (hanya jika bukan desktop)
+                if (!isDesktop) {
+                    navItems.forEach(n => n.classList.remove('active'));
+                    document.querySelector(`.nav-item[data-target="${category}"]`).classList.add('active');
+                }
+            };
+
+            // ... (Kode selanjutnya)
+
+            // Modifikasi Event Listener Navigasi Bawah agar hanya berjalan di mobile
+            navItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    if (!window.matchMedia("(min-width: 768px)").matches) {
+                        const targetId = item.getAttribute('data-target');
+                        // Tidak perlu update active class di sini karena sudah ada di renderContent
+                        renderContent(targetId);
+                    }
+                });
+            });
+
+
+            // Modifikasi Inisialisasi: render content sesuai mode (mobile atau desktop)
+            document.addEventListener('DOMContentLoaded', () => {
+                const isDesktopInitial = window.matchMedia("(min-width: 768px)").matches;
+                if (isDesktopInitial) {
+                    // Di desktop, kita langsung render semua kategori
+                    renderContent('gratis'); // Parameter 'gratis' hanya placeholder
+                } else {
+                    // Di mobile, render kategori default 'gratis'
+                    const defaultTarget = document.querySelector('.nav-item.active').getAttribute('data-target');
+                    renderContent(defaultTarget);
+                }
+            });
     </script>
 </body>
 </html>
