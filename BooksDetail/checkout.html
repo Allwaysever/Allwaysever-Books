@@ -240,15 +240,14 @@ body {
     // 1. Database Harga Produk dan Biaya Admin (Sama dengan file detail)
     const productDB = {
         // Format: 'KODE_PRODUK': { name: 'Nama Produk', basePrice: HARGA_DASAR }
+        'nobook': { name: 'Produk Tidak Dipilih', basePrice: 0 },
         'DPEbyDESSB': { name: 'Digital Product Empire', basePrice: 5000 },
-        'DEVPATH01': { name: 'The Development Path', basePrice: 80000 },
-        'ADVJS02': { name: 'Advanced JS Patterns', basePrice: 120000 },
     };
 
     const ADMIN_FEE = 0; // biaya admin
     
     // Ambil kode produk dari URL yang dilempar oleh halaman detail (e.g., checkout.html?code=DEVPATH01)
-    const CURRENT_PRODUCT_CODE = getUrlParameter('code') || 'DEVPATH01'; // Default ke DEVPATH01
+    const CURRENT_PRODUCT_CODE = getUrlParameter('code') || 'nobook'; // Default ke DEVPATH01
     const product = productDB[CURRENT_PRODUCT_CODE];
     
     let basePrice = 0;
