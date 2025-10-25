@@ -22,6 +22,47 @@ body {
             opacity: 0.8;
             transition: 0.1s;
         }
+		
+		/* ======================================================= */
+/* MEDIA QUERY: DESKTOP OPTIMIZATION (min-width: 768px) */
+/* ======================================================= */
+@media (min-width: 768px) {
+    /* Container lebih lebar di desktop */
+    .container {
+        max-width: 1000px; /* Lebarkan batas maksimum container */
+    }
+
+    /* Info Section: Tata letak lebih terpisah dan terstruktur */
+    .info-section {
+        flex-wrap: nowrap; /* Pastikan Cover dan Teks tidak turun baris */
+        gap: 40px; /* Tambah jarak antar cover dan teks */
+    }
+    
+    /* Teks Info: Memaksimalkan lebar sisa */
+    .text-info {
+        flex-grow: 1; 
+        padding-top: 10px; /* Penyesuaian vertikal agar lebih rapi */
+    }
+
+    /* Cover Display: Ukuran cover ditingkatkan di desktop */
+    .cover-display {
+        width: 200px; 
+        height: 300px; 
+        border-radius: 15px;
+    }
+    
+    /* Tombol Aksi: Sedikit dikecilkan agar tidak terlalu 'janggal' di desktop */
+    .action-button {
+        max-width: 300px; /* Batasi lebar tombol */
+        margin: 20px auto 0 auto; /* Tengah-kan tombol aksi */
+    }
+    
+    /* Sinopsis: Lebar sinopsis mengikuti card */
+    .sinopsis {
+        text-align: justify;
+    }
+}
+
 .container {
     max-width: 800px;
     margin: 0 auto;
