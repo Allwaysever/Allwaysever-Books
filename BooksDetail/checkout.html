@@ -207,25 +207,28 @@ body {
         </div>
 
 <div class="checkout-card">
-    <h2>Ringkasan Pembayaran</h2>
+    <h2 id="checkout-title">Ringkasan Pembayaran</h2>
 
-    <div class="price-details">
-        <div class="price-item">
-            <span class="label">Harga Produk</span>
-            <span class="value" id="base-price">Rp 0</span>
+    <div id="payment-summary-section">
+        <div class="price-details">
+            <div class="price-item">
+                <span class="label">Harga Produk</span>
+                <span class="value" id="base-price">Rp 0</span>
+            </div>
+            <div class="price-item admin-fee-row">
+                <span class="label">Biaya Admin</span>
+                <span class="value" id="admin-fee">Rp 0</span>
+            </div>
         </div>
-        <div class="price-item admin-fee-row">
-            <span class="label">Biaya Admin</span>
-            <span class="value" id="admin-fee">Rp 0</span>
+
+        <div class="payment-summary total-row">
+            <span>Total Pembayaran</span>
+            <span class="price-tag" id="total-price">Rp 0</span>
         </div>
+        
+        <h3 style="color: var(--color-accent-yellow); text-align: center; margin-top: 2rem; margin-bottom: 1rem;">Pilih Metode Pembayaran</h3>
     </div>
-
-    <div class="payment-summary total-row">
-        <span>Total Pembayaran</span>
-        <span class="price-tag" id="total-price">Rp 0</span>
-    </div>
-    <h3 style="color: var(--color-accent-yellow); text-align: center; margin-top: 2rem; margin-bottom: 1rem;">Pilih Metode Pembayaran</h3>
-
+    
     <div id="qris-section" style="padding-top: 1rem;">
         
         <p style="text-align: center; color: var(--color-text-secondary); margin-bottom: 1.5rem;">
@@ -257,7 +260,19 @@ body {
             Pembayaran akan dicek setelah pengisian form konfirmasi. Harap simpan bukti transfer Anda.
         </p>
     </div>
+
+    <div id="no-product-message" style="display: none; text-align: center; padding: 2rem 0;">
+        <i class="fa-solid fa-triangle-exclamation" style="font-size: 3rem; color: #ffce00; margin-bottom: 1rem;"></i>
+        <h3 style="color: var(--color-text-light);">Anda Belum Memilih Produk!</h3>
+        <p style="color: var(--color-text-secondary); margin-bottom: 1.5rem;">
+            Silakan kembali ke halaman utama untuk memilih buku yang ingin Anda beli.
+        </p>
+        <a href="index.html" class="action-button qris-link">
+            <i class="fa-solid fa-home"></i> Kembali ke Halaman Utama
+        </a>
     </div>
+
+</div>
 
 <script>
     // FUNGSI UTILITY: Mendapatkan parameter dari URL
@@ -271,64 +286,85 @@ body {
     // 1. Database Harga Produk dan Biaya Admin (Sama dengan file detail)
     const productDB = {
         // Format: 'KODE_PRODUK': { name: 'Nama Produk', basePrice: HARGA_DASAR }
-        'nobook': { name: 'Produk Tidak Dipilih', basePrice: 0 },
+        // 'nobook': { name: 'Produk Tidak Dipilih', basePrice: 0 }, // Dihapus, 'nobook' dianggap tidak valid
         'DPEbyDESSB': { name: 'Digital Product Empire', basePrice: 5000 },
     };
 
     const ADMIN_FEE = 0; // biaya admin
     
-    // Ambil kode produk dari URL yang dilempar oleh halaman detail (e.g., checkout.html?code=DEVPATH01)
-    const CURRENT_PRODUCT_CODE = getUrlParameter('code') || 'nobook'; // Default ke DEVPATH01
+    // Ambil kode produk dari URL yang dilempar oleh halaman detail
+    const CURRENT_PRODUCT_CODE = getUrlParameter('code'); // Tidak perlu default 'nobook' lagi
     const product = productDB[CURRENT_PRODUCT_CODE];
     
+    // Cek apakah kode produk valid
+    const isProductValid = CURRENT_PRODUCT_CODE && product;
+
     let basePrice = 0;
     let totalPrice = 0;
     
-    if (product) {
+    if (isProductValid) {
         basePrice = product.basePrice;
         totalPrice = basePrice + ADMIN_FEE;
-    } else {
-        console.error("Kode Produk tidak ditemukan. Menggunakan harga 0.");
     }
 
     // Fungsi untuk memperbarui tampilan harga di HTML
     function updatePriceDisplay() {
-        if (!product) {
-            // Jika produk tidak ditemukan, tampilkan pesan error
-            document.querySelector('.checkout-card h2').textContent = 'Produk Tidak Ditemukan!';
-            document.getElementById('base-price').textContent = '-';
-            document.getElementById('admin-fee').textContent = '-';
-            document.getElementById('total-price').textContent = '-';
-            document.getElementById('total-text-qris').textContent = '0';
-            return;
+        const checkoutTitleElement = document.getElementById('checkout-title');
+        const paymentSummarySection = document.getElementById('payment-summary-section');
+        const qrisSection = document.getElementById('qris-section');
+        const noProductMessage = document.getElementById('no-product-message');
+        
+        if (isProductValid) {
+            // Tampilkan rincian pembayaran
+            paymentSummarySection.style.display = 'block';
+            qrisSection.style.display = 'block';
+            noProductMessage.style.display = 'none';
+
+            const formattedBasePrice = 'Rp ' + basePrice.toLocaleString('id-ID');
+            const formattedAdminFee = 'Rp ' + ADMIN_FEE.toLocaleString('id-ID');
+            const formattedTotalPrice = 'Rp ' + totalPrice.toLocaleString('id-ID');
+
+            // Tampilkan Harga Dasar
+            document.getElementById('base-price').textContent = formattedBasePrice;
+
+            // Tampilkan Biaya Admin
+            document.getElementById('admin-fee').textContent = formattedAdminFee;
+
+            // Tampilkan Total Pembayaran
+            document.getElementById('total-price').textContent = formattedTotalPrice;
+            
+            // Tampilkan Total Pembayaran di dalam teks deskripsi
+            document.getElementById('total-text-qris').textContent = formattedTotalPrice;
+            
+            // Update Judul
+            checkoutTitleElement.textContent = 'Ringkasan Pembayaran: ' + product.name;
+            
+        } else {
+            // Sembunyikan rincian pembayaran
+            paymentSummarySection.style.display = 'none';
+            qrisSection.style.display = 'none';
+            
+            // Tampilkan pesan "belum memilih produk"
+            noProductMessage.style.display = 'block';
+            checkoutTitleElement.textContent = 'Proses Pembayaran Gagal';
         }
-
-        const formattedBasePrice = 'Rp ' + basePrice.toLocaleString('id-ID');
-        const formattedAdminFee = 'Rp ' + ADMIN_FEE.toLocaleString('id-ID');
-        const formattedTotalPrice = 'Rp ' + totalPrice.toLocaleString('id-ID');
-
-        // Tampilkan Harga Dasar
-        document.getElementById('base-price').textContent = formattedBasePrice;
-
-        // Tampilkan Biaya Admin
-        document.getElementById('admin-fee').textContent = formattedAdminFee;
-
-        // Tampilkan Total Pembayaran
-        document.getElementById('total-price').textContent = formattedTotalPrice;
-        
-        // Tampilkan Total Pembayaran di dalam teks deskripsi
-        document.getElementById('total-text-qris').textContent = formattedTotalPrice;
-        
-        // Update Judul
-        document.querySelector('.checkout-card h2').textContent = 'Ringkasan Pembayaran: ' + product.name;
     }
 
     // Panggil fungsi update segera setelah script dimuat
     updatePriceDisplay();
 
-const tombol = document.getElementById('tombolKembali');
-    tombol.addEventListener('click', function() {
-        window.history.back();
+    // Logika Tombol Kembali
+    const tombol = document.getElementById('tombolKembali');
+    tombol.addEventListener('click', function(event) {
+        event.preventDefault(); // Mencegah aksi default
+        
+        if (isProductValid) {
+            // Jika produk valid, kembali ke halaman sebelumnya (seperti sebelumnya)
+            window.history.back();
+        } else {
+            // Jika produk tidak valid (masuk tanpa parameter), arahkan ke halaman utama (asumsi index.html)
+            window.location.href = 'index.html'; 
+        }
     });
 </script>
 </body>
